@@ -1,0 +1,119 @@
+/* ============================================================
+ * 设计令牌与基础重置
+ * 设计语言：绿色主题 + 田块网格签名元素
+ * ============================================================ */
+
+:root {
+  --green-900: #06431F;
+  --green-700: #0B6B3A;
+  --green-600: #0E8A49;
+  --green-500: #02C245;
+  --green-200: #BBF7D0;
+  --green-100: #E6F6EC;
+  --green-50:  #F2FAF5;
+  --gold-600:  #B47A1E;
+  --gold-500:  #D98E2B;
+  --gold-100:  #FBF1DE;
+  --gold-line: #F0DFBE;
+  --teal-600:  #14707C;
+  --teal-100:  #E3F2F4;
+  --ink:       #14231B;
+  --ink-2:     #3D5247;
+  --ink-3:     #7B8F84;
+  --bg:        #F4F7F4;
+  --white:     #FFFFFF;
+  --line:      #E3EBE5;
+  --line-soft: #D5E8DC;
+  --danger:    #C0392B;
+  --danger-bg: #FDECEC;
+  --shadow-sm: 0 1px 2px rgba(13, 44, 28, .06), 0 4px 14px rgba(13, 44, 28, .05);
+  --shadow-md: 0 6px 24px rgba(13, 44, 28, .10);
+  --shadow-lg: 0 18px 50px rgba(6, 45, 24, .16);
+  --radius:    16px;
+  --radius-sm: 10px;
+  --font: 'Microsoft YaHei', 'PingFang SC', 'Noto Sans SC', 'Source Han Sans SC', Arial, sans-serif;
+  --header-h: 64px;
+  --content-w: 1280px;
+}
+
+/* ---------- 深色视图统一令牌（0.6.3） ----------
+ * 研究检索 / 域外检索 / fsQCA 三处深色页原先各持一套互不相通的局部令牌，
+ * 且 accent 绿蓝混用。这里收敛为唯一来源：accent 回归品牌绿（同 Hero 统计数），
+ * 蓝色降级为「外链 / 编码徽标」单一用途。各页保留旧变量名并引用本组令牌，
+ * 因此 JS 与类名零改动。 */
+:root {
+  --dark-bg:        #0C1512;   /* 页面底 */
+  --dark-card:      #111B18;   /* 卡片/面板 */
+  --dark-input:     #0B1511;   /* 输入控件底 */
+  --dark-border:    #2C4238;   /* 常规边框 */
+  --dark-border-hi: #416351;   /* 悬停/强调边框 */
+  --dark-text:      #E8F2EE;   /* 主文字 */
+  --dark-muted:     #A9C0B6;   /* 次要文字 */
+  --dark-accent:    #7BE0A2;   /* 品牌绿 accent（同 hero-stat） */
+  --dark-accent-2:  #9AE0C3;   /* accent 亮档（链接/数字） */
+  --dark-link:      #8BC6FF;   /* 仅用于外链/URL 与编码徽标的蓝色，全站统一 */
+  --dark-warn:      #FFD38B;   /* 警示/修订标记 */
+  --dark-radius-card: 14px;
+  --dark-radius-ctl:  8px;
+  --dark-shadow-sm: 0 2px 8px rgba(0, 0, 0, .35);
+  --dark-shadow-md: 0 8px 28px rgba(0, 0, 0, .45);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--ink);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+img { display: block; max-width: 100%; }
+button { font-family: inherit; cursor: pointer; }
+a { color: inherit; text-decoration: none; }
+ul { list-style: none; }
+:focus-visible { outline: 2px solid var(--green-500); outline-offset: 2px; }
+
+/* 桌面应用：禁用文本选择式拖拽与图片拖动，更接近原生手感 */
+body { overscroll-behavior: none; }
+img, svg { -webkit-user-drag: none; }
+
+/* ---------- 田块网格签名元素 ---------- */
+.plot-grid {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, .06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, .06) 1px, transparent 1px);
+  background-size: 46px 46px;
+}
+.plot-grid-dark {
+  background-image:
+    linear-gradient(rgba(11, 107, 58, .05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(11, 107, 58, .05) 1px, transparent 1px);
+  background-size: 46px 46px;
+}
+
+/* ---------- 动画 ---------- */
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideUp { from { opacity: 0; transform: translateY(26px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ---------- 深色页滚动条（0.6.3） ---------- */
+#pageResearch ::-webkit-scrollbar,
+#pageExternal ::-webkit-scrollbar,
+#pageFsqca ::-webkit-scrollbar { width: 10px; height: 10px; }
+#pageResearch ::-webkit-scrollbar-track,
+#pageExternal ::-webkit-scrollbar-track,
+#pageFsqca ::-webkit-scrollbar-track { background: transparent; }
+#pageResearch ::-webkit-scrollbar-thumb,
+#pageExternal ::-webkit-scrollbar-thumb,
+#pageFsqca ::-webkit-scrollbar-thumb {
+  background: var(--dark-border); border-radius: 5px; border: 2px solid transparent; background-clip: content-box;
+}
+#pageResearch ::-webkit-scrollbar-thumb:hover,
+#pageExternal ::-webkit-scrollbar-thumb:hover,
+#pageFsqca ::-webkit-scrollbar-thumb:hover { background-color: var(--dark-border-hi); }
+
+/* ---------- 辅助 / 无障碍 ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  html { scroll-behavior: auto; }
+}
