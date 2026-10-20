@@ -78,7 +78,7 @@ function shell(meta, facets) {
     <section class="external-results" aria-labelledby="externalResultsHeading"><div class="external-results-head"><h2 id="externalResultsHeading" tabindex="-1">检索结果</h2><span>每页20条 · 按文本命中排序</span></div><p id="externalStatus" role="status" aria-live="polite"></p><p id="externalError" role="alert" hidden></p><div id="externalResultBody"></div></section>
     <section class="external-online" aria-labelledby="externalOnlineHeading"><div class="external-results-head"><h2 id="externalOnlineHeading" tabindex="-1">在线检索域（试运行）</h2><span>联网 · 结果未核验</span></div>
       <p class="external-online-note"><strong>与上方检索不同：</strong>这里会<strong>联网</strong>，由应用主进程向已批准的政府站点检索入口发起请求（域名白名单、单站限时、同义词轮询与分页抓取、不发凭据）。返回的是<strong>在线页面标题与链接，未经核验</strong>，不进入离线快照，也不计入任何统计。检索中途可停止并保留已取回部分；同一会话内重复检索命中临时缓存（存于系统临时文件夹，程序退出时自动清除）。多数站点的检索页由脚本渲染，服务端取不到条目时按指向列出跳转条目（含网址与来源概述）。</p>
-      <form class="external-search" id="externalOnlineForm"><label class="external-field external-query"><span>在线检索词</span><input id="externalOnlineQuery" type="search" maxlength="60" autocomplete="off" placeholder="如：全域土地综合整治" aria-describedby="externalOnlineHelp"></label><button class="external-button external-primary" type="submit">向已批准站点检索</button><button class="external-button external-quiet" type="button" data-action="online-sources">查看来源清单</button><p id="externalOnlineHelp" class="external-help">与离线检索相互独立：离线结果来自随包发布的快照，在线结果来自本次实时请求。</p></form>
+      <form class="external-search" id="externalOnlineForm"><label class="external-field external-query"><span>在线检索词</span><input id="externalOnlineQuery" type="search" maxlength="60" autocomplete="off" placeholder="如：全域土地综合整治" aria-describedby="externalOnlineHelp"></label><button class="external-button external-primary" type="submit">向已批准站点检索</button><button class="external-button" type="button" data-action="bing-gov">必应限定政府网站</button><button class="external-button external-quiet" type="button" data-action="online-sources">查看来源清单</button><p id="externalOnlineHelp" class="external-help">“必应限定政府网站”会在新标签页搜索 <code>site:gov.cn + 关键词</code>；无需安装桌面应用。其它实时多站检索仍仅在桌面版可用。</p></form>
       <p id="externalOnlineStatus" role="status" aria-live="polite"></p><div id="externalOnlineBody"></div>
     </section>
     <details class="external-coverage" id="externalCoverage"><summary>采集覆盖与证据口径</summary><p>仅表示已经运行的公开来源目录和列表页；未配置或未扫描地区不代表没有相关实践。一个政府网站的承载不等于其为发文机关；“本库外候选”须核实项目地点、项目主体及本库重合情况。标注「与本库重合」的记录只做标记、不从外部库删除，其中由案名地点后缀推定的重合已注明为派生判定，需人工复核。</p><ul>${meta.sourceCoverage.map(row => `<li><strong>${esc(row.region)}</strong>：${esc(row.status === 'scanned' ? '已扫描' : row.status === 'attempted-no-body' ? '尝试但未取得正文' : '尚未配置')} · ${esc(row.sources.join('、') || '无启用来源')} · 列表页 ${esc(row.listPages)} · 正文 ${esc(row.bodyArticles)} · 元数据 ${esc(row.metadataOnly)} · 错误 ${esc(row.errors)}</li>`).join('')}</ul><p>提取正文不代表完整原文。摘录为自动选取的原文片段，未核验完整性；政策文件和实践候选分开标记。转载不作为独立佐证。采集日期不等于发布日期。</p></details>
@@ -219,7 +219,7 @@ function renderOnline(page) {
     }
     return;
   }
-  if (!isDesktop) { status.textContent = '在线检索仅在桌面应用中可用（浏览器环境不绕开白名单联网）。'; body.innerHTML = ''; return; }
+  if (!isDesktop) { status.textContent = '网页端可使用“必应限定政府网站”；实时多站聚合检索仅在桌面应用中可用。'; body.innerHTML = ''; return; }
   status.textContent = online.result ? '' : '尚未发起在线检索。';
   body.innerHTML = onlineBody();
 }
@@ -282,6 +282,7 @@ function bind(page) {
     if(action==='page'&&!id&&latest) { collect(page); ui.query=ui.draft; ui.offset=Math.max(0,ui.offset+Number(control.dataset.step)*PAGE_SIZE); update(page); return; }
     if(action==='read'&&!id) { collect(page); ui.query=ui.draft; ui.scrollTop=window.scrollY; ui.focus=control.dataset.record; navigate(VIEW.EXTERNAL,{recordId:control.dataset.record}); return; }
     if(action==='open'||action==='online-open') { event.preventDefault(); const url=safeUrl(control.dataset.url); if(!url) { notify('仅允许打开安全的 HTTPS 原始网页。','warn'); return; } void openExternal(url).then(result=>{ if(result===false||result?.ok===false) throw new Error('无法打开原始网页。'); }).catch(error=>notify(msg(error),'error')); return; }
+    if(action==='bing-gov') { event.preventDefault(); const query=String(page.querySelector('#externalOnlineQuery')?.value||'').trim(); if(query.length<2){notify('请至少输入 2 个字符。','warn');page.querySelector('#externalOnlineQuery')?.focus();return;} const url=`https://www.bing.com/search?q=${encodeURIComponent(`site:gov.cn ${query}`)}`; void openExternal(url); return; }
     if(action==='online-sources') { online.showSources=true; online.sources=null; renderOnline(page); void getOnlineSources().then(result=>{ if(!current(page,token,id)) return; online.sources=result; renderOnline(page); }).catch(error=>notify(msg(error),'error')); return; }
     if(action==='online-close-sources') { online.showSources=false; renderOnline(page); return; }
     if(action==='online-cancel') { void cancelOnlineSearch(); return; }
