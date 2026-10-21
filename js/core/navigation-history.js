@@ -5,6 +5,7 @@ let host;
 let restoring = false;
 let clickOrigin = null;
 let clickRecorded = false;
+let revision = 0;
 export const isRestoringNavigation = () => restoring;
 export function registerNavigationContext(key, capture, restore, afterRender) {
   contexts.set(key, { capture, restore, afterRender });
@@ -32,10 +33,21 @@ function updateButton() {
   const button = document.getElementById('navigationBack');
   if (button) { button.hidden = entries.length === 0; button.disabled = restoring; }
 }
-export function rememberNavigation() {
+// Choosing a destination explicitly ends the current index-return journey.
+export function clearNavigationHistory() {
+  entries.length = 0;
+  revision++;
+  clickRecorded = Boolean(clickOrigin);
+  document.querySelectorAll('.navigation-target, .research-linked-target').forEach(el => el.classList.remove('navigation-target', 'research-linked-target'));
+  updateButton();
+}
+export function dismissNavigation(scope) {
+  if (!restoring && entries.at(-1)?.scope === scope) { entries.pop(); updateButton(); }
+}
+export function rememberNavigation({ scope = null } = {}) {
   if (!host || restoring || clickRecorded) return;
   const origin = clickOrigin || snapshot();
-  entries.push(origin);
+  entries.push({ ...origin, scope });
   if (entries.length > 50) entries.shift();
   if (clickOrigin) clickRecorded = true;
   updateButton();
@@ -43,16 +55,19 @@ export function rememberNavigation() {
 export async function returnToPrevious() {
   if (!host || restoring || !entries.length) return false;
   const entry = entries.pop();
+  const restoringRevision = revision;
   restoring = true; updateButton();
   try {
     document.getElementById('modalClose')?.click();
     document.querySelector('.arc-overlay [data-arc-close]')?.click();
     for (const [key, value] of entry.contexts) contexts.get(key)?.restore(value);
     await host.restore(entry.state);
+    if (revision !== restoringRevision) return false;
     for (const [key, value] of entry.contexts) contexts.get(key)?.afterRender?.(value);
     for (const [selector, open] of entry.details) { const el = document.querySelector(selector); if (el) el.open = open; }
     for (const [selector, left, top] of entry.scrolls) { const el = document.querySelector(selector); if (el) { el.scrollLeft = left; el.scrollTop = top; } }
     await new Promise(resolve => requestAnimationFrame(resolve));
+    if (revision !== restoringRevision) return false;
     const focus = entry.focus && document.querySelector(entry.focus);
     focus?.focus({ preventScroll: true });
     window.scrollTo({ left: entry.x, top: entry.y, behavior: 'instant' });
@@ -84,7 +99,11 @@ export function initNavigationHistory(config) {
     if (trigger) clickOrigin.focus = pathOf(trigger);
     clickRecorded = false;
     setTimeout(() => { clickOrigin = null; clickRecorded = false; }, 0);
+    if (event.target.closest('.site-header a[href], .site-header [data-goto-view], .site-footer a[href]')) {
+      clearNavigationHistory();
+      return;
+    }
     const anchor = event.target.closest('a[href^="#"]');
-    if (anchor && anchor.getAttribute('href').length > 1) rememberNavigation();
+    if (anchor && anchor.getAttribute('href').length > 1 && !anchor.closest('.site-header, .site-footer, [data-goto-view]')) rememberNavigation();
   }, true);
 }
