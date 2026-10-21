@@ -9,8 +9,8 @@
       "date": "2026-10-08",
       "legacy": null,
       "sha256": "21330874b46565589a76fcb249d2f1681e1fccdcb5d88cca567ec2b7b21b13a4",
-      "downloadUrl": null,
-      "publicationStatus": "pending",
+      "downloadUrl": "https://github.com/shuwgc/clc-case-codex/releases/download/installer-archive-20261021/CLC-v040-x64.exe",
+      "publicationStatus": "published",
       "screenshots": [
         {
           "src": "assets/history/v040-research.jpg",
@@ -28,8 +28,8 @@
       "date": "2026-10-09",
       "legacy": null,
       "sha256": "ced65aa8e07882806eaaf45b0d8161ac86881472217e684ce8cfa41dff30f511",
-      "downloadUrl": null,
-      "publicationStatus": "pending",
+      "downloadUrl": "https://github.com/shuwgc/clc-case-codex/releases/download/installer-archive-20261021/CLC-v053-x64.exe",
+      "publicationStatus": "published",
       "screenshots": [
         {
           "src": "assets/history/v053-external.jpg",
@@ -47,8 +47,8 @@
       "date": "2026-10-12",
       "legacy": null,
       "sha256": "63b33ebdd3dd1bd4a6e9018fde4caede07bc44c3b5da3d1f78219eb47256607b",
-      "downloadUrl": null,
-      "publicationStatus": "pending",
+      "downloadUrl": "https://github.com/shuwgc/clc-case-codex/releases/download/installer-archive-20261021/CLC-v055-a-x64.exe",
+      "publicationStatus": "published",
       "screenshots": [
         {
           "src": "assets/history/v055-a-external.jpg",
@@ -71,8 +71,8 @@
       "date": "2026-10-12",
       "legacy": null,
       "sha256": "908844dd1481dadcf508ec99717101057d60e570a31b4fe95bf44349b5cdc137",
-      "downloadUrl": null,
-      "publicationStatus": "pending",
+      "downloadUrl": "https://github.com/shuwgc/clc-case-codex/releases/download/installer-archive-20261021/CLC-v055-b-x64.exe",
+      "publicationStatus": "published",
       "screenshots": [
         {
           "src": "assets/history/v055-b-external.jpg",
@@ -95,8 +95,8 @@
       "date": "2026-10-13",
       "legacy": null,
       "sha256": "6993d48acccde88cbd83a345799b0c8452f444fa457842bb62eb472ab4c92cfa",
-      "downloadUrl": null,
-      "publicationStatus": "pending",
+      "downloadUrl": "https://github.com/shuwgc/clc-case-codex/releases/download/installer-archive-20261021/CLC-v060-a-x64.exe",
+      "publicationStatus": "published",
       "screenshots": [
         {
           "src": "assets/history/v060-a-coding.jpg",
@@ -114,8 +114,8 @@
       "date": "2026-10-13",
       "legacy": null,
       "sha256": "ff67c81d5dfbfd2f6a57fb67d85586bbf3efa39bd6f1d414fdbb7c3c2c355790",
-      "downloadUrl": null,
-      "publicationStatus": "pending",
+      "downloadUrl": "https://github.com/shuwgc/clc-case-codex/releases/download/installer-archive-20261021/CLC-v060-b-x64.exe",
+      "publicationStatus": "published",
       "screenshots": [
         {
           "src": "assets/history/v060-b-coding.jpg",
@@ -138,8 +138,8 @@
       "date": "2026-10-13",
       "legacy": null,
       "sha256": "fd2f61839b1eab8a4e00b91cb6936ad5a5b2d8d524518f28c636568ea2665129",
-      "downloadUrl": null,
-      "publicationStatus": "pending",
+      "downloadUrl": "https://github.com/shuwgc/clc-case-codex/releases/download/installer-archive-20261021/CLC-v060-d-x64.exe",
+      "publicationStatus": "published",
       "screenshots": [
         {
           "src": "assets/history/v060-d-coding.jpg",
@@ -162,8 +162,8 @@
       "date": "2026-10-13",
       "legacy": null,
       "sha256": "6208679dc5ff6435e31fa6ee1d41ea9f3ea5050857e4e7e0b284833cb347aad2",
-      "downloadUrl": null,
-      "publicationStatus": "pending",
+      "downloadUrl": "https://github.com/shuwgc/clc-case-codex/releases/download/installer-archive-20261021/CLC-v060-e-x64.exe",
+      "publicationStatus": "published",
       "screenshots": [
         {
           "src": "assets/history/v060-e-coding.jpg",
@@ -186,8 +186,8 @@
       "date": "2026-10-14",
       "legacy": null,
       "sha256": "b9950959fd2f718214a819af83598f4a78347754f7ccaac9fc48254cb46dd034",
-      "downloadUrl": null,
-      "publicationStatus": "pending",
+      "downloadUrl": "https://github.com/shuwgc/clc-case-codex/releases/download/installer-archive-20261021/CLC-v061-x64.exe",
+      "publicationStatus": "published",
       "screenshots": [
         {
           "src": "assets/history/v061-analysis.jpg",
@@ -205,8 +205,8 @@
       "date": "2026-10-15",
       "legacy": null,
       "sha256": "b596b907193677060f6e10c69cf438dcebc4883165217cfc3d903e9ff80346e7",
-      "downloadUrl": null,
-      "publicationStatus": "pending",
+      "downloadUrl": "https://github.com/shuwgc/clc-case-codex/releases/download/installer-archive-20261021/CLC-v062-early-x64.exe",
+      "publicationStatus": "published",
       "screenshots": [
         {
           "src": "assets/history/v062-early-external.jpg",
@@ -229,8 +229,8 @@
       "date": "2026-10-15",
       "legacy": null,
       "sha256": "8faca2a830b16a6d26ead484b134129bfbd10406739770184c92a7e154665025",
-      "downloadUrl": null,
-      "publicationStatus": "pending",
+      "downloadUrl": "https://github.com/shuwgc/clc-case-codex/releases/download/installer-archive-20261021/CLC-v062-x64.exe",
+      "publicationStatus": "published",
       "screenshots": [
         {
           "src": "assets/history/v062-external.jpg",
@@ -253,8 +253,8 @@
       "date": null,
       "legacy": null,
       "sha256": "e7f6e6959eda335fb77416d8494678899a739db9a6b2814224da4b191898a175",
-      "downloadUrl": null,
-      "publicationStatus": "pending",
+      "downloadUrl": "https://github.com/shuwgc/clc-case-codex/releases/download/installer-archive-20261021/CLC-v063-a-x64.exe",
+      "publicationStatus": "published",
       "screenshots": [
         {
           "src": "assets/history/v063-a-analysis.jpg",
@@ -272,8 +272,8 @@
       "date": null,
       "legacy": null,
       "sha256": "64ce2cba1e4951e20e733035039db9d485b51d938234153ded59219626d66812",
-      "downloadUrl": null,
-      "publicationStatus": "pending",
+      "downloadUrl": "https://github.com/shuwgc/clc-case-codex/releases/download/installer-archive-20261021/CLC-v063-b-x64.exe",
+      "publicationStatus": "published",
       "screenshots": [
         {
           "src": "assets/history/v063-b-analysis.jpg",
@@ -291,8 +291,8 @@
       "date": "2026-10-19",
       "legacy": null,
       "sha256": "8c269dec5a69e6ee3c87b629d014d2fdcad87d3065436a97b1b58f803975b86d",
-      "downloadUrl": null,
-      "publicationStatus": "pending",
+      "downloadUrl": "https://github.com/shuwgc/clc-case-codex/releases/download/installer-archive-20261021/CLC-v065-original-x64.exe",
+      "publicationStatus": "published",
       "screenshots": [
         {
           "src": "assets/history/v065-original-fsqca.jpg",
@@ -315,8 +315,8 @@
       "date": "2026-10-20",
       "legacy": null,
       "sha256": "d524be381c4e96587ce9cacbe41b2c9bd3047e0e17e155f2f5013f5c8bc8fe2c",
-      "downloadUrl": null,
-      "publicationStatus": "pending",
+      "downloadUrl": "https://github.com/shuwgc/clc-case-codex/releases/download/installer-archive-20261021/CLC-v065-reviewed-x64.exe",
+      "publicationStatus": "published",
       "screenshots": [
         {
           "src": "assets/history/v065-reviewed-fsqca.jpg",
@@ -339,8 +339,8 @@
       "date": "2026-10-20",
       "legacy": null,
       "sha256": "71bf4df16cc9f8499f4c662a13fbdad0aac67086361ae7c6a29dbf5cdda6eae1",
-      "downloadUrl": null,
-      "publicationStatus": "pending",
+      "downloadUrl": "https://github.com/shuwgc/clc-case-codex/releases/download/installer-archive-20261021/CLC-v066-x64.exe",
+      "publicationStatus": "published",
       "screenshots": [
         {
           "src": "assets/history/v066-fsqca.jpg",
@@ -368,8 +368,8 @@
       "date": null,
       "legacy": true,
       "sha256": "bb0221be715d3da6fd6260f8032b1a28ef96a5648a0891846f8404cbba0c4e71",
-      "downloadUrl": null,
-      "publicationStatus": "pending",
+      "downloadUrl": "https://github.com/shuwgc/clc-case-codex/releases/download/installer-archive-20261021/CLC-legacy100-x64.exe",
+      "publicationStatus": "published",
       "screenshots": [
         {
           "src": "assets/history/legacy100-library.jpg",
@@ -387,8 +387,8 @@
       "date": null,
       "legacy": true,
       "sha256": "9977652c6184613b98308c1235ee7b8db4f4f519591f26d05980566135debc62",
-      "downloadUrl": null,
-      "publicationStatus": "pending",
+      "downloadUrl": "https://github.com/shuwgc/clc-case-codex/releases/download/installer-archive-20261021/CLC-legacy101-x64.exe",
+      "publicationStatus": "published",
       "screenshots": [
         {
           "src": "assets/history/legacy101-policy.jpg",
@@ -406,8 +406,8 @@
       "date": null,
       "legacy": true,
       "sha256": "ef35f88e08efa94a82929ea3a9783d5600da65ce2e59553bb162270827f9d671",
-      "downloadUrl": null,
-      "publicationStatus": "pending",
+      "downloadUrl": "https://github.com/shuwgc/clc-case-codex/releases/download/installer-archive-20261021/CLC-legacy11-x64.exe",
+      "publicationStatus": "published",
       "screenshots": [
         {
           "src": "assets/history/legacy11-library.jpg",
