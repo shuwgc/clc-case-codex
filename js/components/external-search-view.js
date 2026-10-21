@@ -1,3 +1,4 @@
+import { registerNavigationContext, isRestoringNavigation, rememberNavigation, jumpToTarget } from '../core/navigation-history.js';
 import { $, esc } from '../core/dom.js';
 import { createExternalSearch } from '../core/external-search.js';
 import { highlightText } from '../core/research.js';
@@ -7,6 +8,8 @@ import { openExternal, notify, searchOnline, getOnlineSources, isDesktop, cancel
 const PAGE_SIZE = 20;
 const ONLINE_PAGE_SIZE = 20;
 const ui = { query: '', draft: '', offset: 0, filters: { mode: 'all', family: '', province: '', host: '', articleKind: '', relation: '', coverage: '', from: '', to: '', includeUndated: false, bodyOnly: false }, scrollTop: 0, focus: '', terms: [] };
+registerNavigationContext('external-search-view', () => ui, value => Object.assign(ui, value));
+
 /* 在线检索试运行状态：与离线检索完全分开，不写入任何快照或统计 */
 const online = { busy: false, query: '', result: null, showSources: false, sources: null, progress: null, offset: 0, hadPartial: false };
 let index;

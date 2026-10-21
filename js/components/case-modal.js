@@ -1,3 +1,4 @@
+import { registerNavigationContext, rememberNavigation } from '../core/navigation-history.js';
 /* ================================================================
  * 组件：案例详情弹窗
  * ================================================================ */
@@ -16,11 +17,17 @@ const ICON_PIN = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" ar
 const ICON_MONEY = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2v20M17 5.5H9.5a3 3 0 0 0 0 6h5a3 3 0 0 1 0 6H6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>';
 
 let lastFocused = null;
+let openedProject = null;
+registerNavigationContext('case-modal', () => ({ project: isModalOpen() ? openedProject : null, scroll: document.querySelector('#caseModal .modal-panel')?.scrollTop || 0 }), () => {}, value => {
+  if (value.project) { openModal(value.project); const box = document.querySelector('#caseModal .modal-panel'); if (box) box.scrollTop = value.scroll; }
+});
 
 /** 打开案例详情弹窗 */
 export function openModal(project) {
   if (!project) return;
 
+  rememberNavigation();
+  openedProject = project;
   lastFocused = document.activeElement;
 
   /* 封面（0.6.3 P2-4）：有该案例报道实景照片时用「照片 + 深绿蒙版」，

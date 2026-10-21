@@ -1,3 +1,4 @@
+import { registerNavigationContext, isRestoringNavigation, rememberNavigation, jumpToTarget } from '../core/navigation-history.js';
 /* ================================================================
  * 组件：相关资料总览页（二级栏目）
  * ----------------------------------------------------------------
@@ -25,10 +26,12 @@ const HOME_HERO_IMG = 'assets/hero.jpg';
 /* 页内筛选状态 */
 const UI_BASE = { batch: '', province: '', category: '', query: '', sort: 'id' };
 let ui = { ...UI_BASE };
+registerNavigationContext('sources-index', () => ui, value => Object.assign(ui, value));
+
 
 /** 离开总览页时清空页内筛选，避免返回时残留 */
 export function resetSourcesIndexState() {
-  ui = { ...UI_BASE };
+  if (!isRestoringNavigation()) ui = { ...UI_BASE };
 }
 
 /* 案例 → 来源条目（合并批次/省份，来源统计取自 sources-data） */
@@ -65,7 +68,7 @@ export function renderSourcesIndex(state) {
   if (!page) return;
   if (state.view !== VIEW.SOURCES) return;
 
-  ui = { ...UI_BASE };
+  if (!isRestoringNavigation()) ui = { ...UI_BASE };
 
   page.innerHTML = `
     ${renderHero()}
@@ -77,6 +80,14 @@ export function renderSourcesIndex(state) {
     </div>`;
 
   bind(page);
+  for (const [selector, key, attr] of [
+    ['#srcBatch .pg-chip', 'batch', 'batch'],
+    ['#srcProv .pg-chip', 'province', 'prov'],
+    ['#srcSort .pg-chip', 'sort', 'sort'],
+    ['.mech-row[data-cat]', 'category', 'cat'],
+  ]) page.querySelectorAll(selector).forEach(button =>
+    button.classList.toggle('active', (button.dataset[attr] || '') === ui[key]));
+  page.querySelector('#srcQuery').value = ui.query;
   window.scrollTo({ top: 0, behavior: 'auto' });
 }
 

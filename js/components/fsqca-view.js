@@ -1,3 +1,5 @@
+import { RULE_DEFINITIONS } from '../../data/fsqca-rule-definitions.js';
+import { registerNavigationContext, isRestoringNavigation, rememberNavigation, jumpToTarget } from '../core/navigation-history.js';
 import { $, esc, delegate } from '../core/dom.js';
 import { openExternal, notify } from '../core/desktop.js';
 import { getState, navigate, VIEW } from '../core/state.js';
@@ -14,6 +16,8 @@ import { evidenceTargets } from '../core/evidence-links.js';
 const OVERRIDE_KEY = 'fsqca-overrides';
 
 const ui = { caseId: '01', selectedRule: null, tab: 'coding' };
+registerNavigationContext('fsqca-view', () => ui, value => Object.assign(ui, value));
+
 
 function loadOverrides() {
   try { return JSON.parse(localStorage.getItem(OVERRIDE_KEY) || '{}'); }
@@ -67,7 +71,7 @@ function ruleList(caseData) {
     const r = effectiveRule(caseData.id, code);
     if (!r) return '';
     const active = ui.selectedRule === code ? ' active' : '';
-    return `<button type="button" class="fsqca-rule${active}" data-rule="${esc(code)}">
+    return `<button type="button" class="fsqca-rule${active}" data-rule="${esc(code)}" aria-pressed="${ui.selectedRule === code}" aria-controls="fsqcaRuleDetail">
       <span class="fsqca-rule-code">${esc(code)}</span>
       <span class="fsqca-rule-name">${esc(r.name)}</span>
       ${scoreBadge(r)}
@@ -101,8 +105,12 @@ function ruleDetail(caseData) {
     : '<p class="fsqca-hint">该细则当前无证据编号（可能缺失或不适用）。</p>';
   const statusButtons = Object.entries(SCALE.status).map(([key, s]) =>
     `<button type="button" class="fsqca-status-btn${rule.status === key ? ' active' : ''}" data-status="${esc(key)}" title="标记为${esc(key)}">${esc(s.label)}</button>`).join('');
-  return `<section class="fsqca-detail">
+  const level = SCALE.levels.find(l => l.value === parseScore(rule.score).value);
+  const color = SCALE.status[rule.status]?.counts ? level?.color : SCALE.status[rule.status]?.color;
+  return `<section class="fsqca-detail fsqca-selected-detail" data-detail-rule="${esc(rule.code)}" style="--rule-color:${color || '#8a8f98'}" tabindex="-1">
+    <p class="fsqca-location-label">已定位 · ${esc(caseData.id)} 案 · ${esc(rule.code)}</p>
     <div class="fsqca-detail-head"><h3>${esc(rule.code)} · ${esc(rule.name)}</h3>${scoreBadge(rule)}</div>
+    <div class="fsqca-rule-definition"><h4>这条细则是什么意思</h4><p>${esc(RULE_DEFINITIONS[rule.code] || '暂无通用释义')}</p><small>通用释义用于理解细则；本案例的评分理由与证据见下方。</small></div>
     <p class="fsqca-detail-basis"><strong>评分依据（观测要点）：</strong>${esc(rule.basis || '（未填写）')}</p>
     <p class="fsqca-detail-quote"><strong>证据摘录：</strong>${esc(rule.quote || '（无）')}</p>
     <h4>证据链（反检索）</h4>${evidenceHtml}
@@ -134,7 +142,7 @@ function heatSection() {
     const cells = m.cells[ri] || [];
     return `<tr><th title="${esc(c.name)}">${esc(c.id)}</th>${cells.map((cell, ci) => {
       const ovSuffix = cell?.overridden ? '（已修订）' : '';
-      return `<td data-c="${ci}"${cell?.overridden ? ' class="qca-heat-ov"' : ''} style="background:${colorFor(cell)}" title="${esc(cell?.code || '')} ${esc(String(cell?.score ?? ''))} ${esc(cell?.status ?? '')}${ovSuffix}"></td>`;
+      return `<td data-c="${ci}" data-heat-case="${esc(c.id)}" data-heat-rule="${esc(m.rules[ci])}" class="${cell?.overridden ? 'qca-heat-ov ' : ''}${c.id === ui.caseId && m.rules[ci] === ui.selectedRule ? 'cell-active' : ''}" style="background:${colorFor(cell)}" title="${esc(cell?.code || '')} ${esc(String(cell?.score ?? ''))} ${esc(cell?.status ?? '')}${ovSuffix}"></td>`;
     }).join('')}</tr>`;
   }).join('');
   const head = `<tr><th>案例</th>${m.rules.map((r, ci) => `<th data-c="${ci}" data-code="${esc(r)}" title="${esc(r)}">${esc(r)}</th>`).join('')}</tr>`;
@@ -224,10 +232,17 @@ function switchTab(page, tab) {
   if (tab === 'official') renderOfficial(page);
 }
 
+function locateSelectedRule(page) {
+  if (!ui.selectedRule || isRestoringNavigation()) return;
+  const cell = page.querySelector(`[data-heat-case="${CSS.escape(ui.caseId)}"][data-heat-rule="${CSS.escape(ui.selectedRule)}"]`);
+  cell?.classList.add('cell-active');
+  jumpToTarget(page.querySelector('[data-detail-rule]'), { record: false });
+}
+
 function bind(page) {
   delegate(page, '.fsqca-tab', 'click', (e, el) => switchTab(page, el.dataset.tab));
   delegate(page, '#fsqcaCaseSelect', 'change', (e, el) => { ui.caseId = el.value; ui.selectedRule = null; renderBody(page); });
-  delegate(page, '[data-rule]', 'click', (e, el) => { ui.selectedRule = el.dataset.rule; renderBody(page); });
+  delegate(page, '[data-rule]', 'click', (e, el) => { rememberNavigation(); ui.selectedRule = el.dataset.rule; renderBody(page); locateSelectedRule(page); });
   delegate(page, '[data-action="open"]', 'click', (e, el) => { e.preventDefault(); const u = el.dataset.url; if (u) void openExternal(u); });
   delegate(page, '[data-local-kind]', 'click', (_e, el) => {
     navigate(el.dataset.localKind === 'tool' ? VIEW.CASE_POLICY : VIEW.CASE_SOURCES,
@@ -293,6 +308,7 @@ function bind(page) {
     window.addEventListener('fsqca-goto-case', e => {
       const id = String(e.detail || '');
       if (!getCase(id)) return;
+      rememberNavigation();
       ui.caseId = id;
       ui.selectedRule = null;
       switchTab(page, 'coding');
@@ -308,7 +324,7 @@ export async function renderFsqca(state) {
   if (!page || state.view !== VIEW.FSQCA) return;
   setOverrides(loadOverrides());
   const target = state.viewParams;
-  if (target?.caseId && getCase(target.caseId)) {
+  if (!isRestoringNavigation() && target?.caseId && getCase(target.caseId)) {
     ui.caseId = String(target.caseId).padStart(2, '0');
     ui.selectedRule = getCase(ui.caseId).rules.some(r => r.code === target.ruleCode) ? target.ruleCode : null;
     ui.tab = 'coding';
@@ -318,7 +334,7 @@ export async function renderFsqca(state) {
   switchTab(page, ui.tab);
   renderBody(page);
   bind(page);
-  if (target?.ruleCode) page.querySelector(`[data-rule="${CSS.escape(target.ruleCode)}"]`)?.scrollIntoView({ block: 'center' });
+  if (target?.ruleCode) locateSelectedRule(page);
 }
 
 export function focusFsqca() {
