@@ -522,7 +522,7 @@ function bind(page) {
   delegate(page, '.doc-link[data-url]', 'click', (_e, el) => openExternal(el.dataset.url));
 
   /* 案例卡片 / 透视卡里的跳转按钮 → 打开该案例政策工具页 */
-  delegate(page, '[data-case]', 'click', (_e, el) => goCasePolicy(el.dataset.case));
+  delegate(page, '[data-case]', 'click', (_e, el) => goCasePolicy(el.dataset.case, { index: true }));
 
   /* 机制分布条 → 展开「跨案例工具透视」 */
   delegate(page, '.mech-row[data-mech]', 'click', (_e, row) => {

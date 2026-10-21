@@ -5,7 +5,7 @@
  * 避免原实现中各组件互相调用 render 造成的隐式耦合。
  * ================================================================ */
 
-import { rememberNavigation } from './navigation-history.js';
+import { rememberNavigation, clearNavigationHistory } from './navigation-history.js';
 
 import { PROJECTS, ALL } from '../../data/projects.js';
 
@@ -83,6 +83,7 @@ export function showMore() {
 
 /** 重置全部筛选条件，保留当前模式 */
 export function resetFilters() {
+  clearNavigationHistory();
   setState({
     ...DEFAULT_STATE,
     mode: state.mode
@@ -130,9 +131,10 @@ export function subscribe(fn) {
 /* ---------- 路由 ---------- */
 
 /** 切换页面。params 用于携带页面上下文（如案例编号） */
-export function navigate(view, params = {}) {
+export function navigate(view, params = {}, { index = false } = {}) {
+  if (!index) clearNavigationHistory();
   if (state.view === view && JSON.stringify(state.viewParams) === JSON.stringify(params)) return;
-  rememberNavigation();
+  if (index) rememberNavigation();
   state = { ...state, view, viewParams: params };
   notify();
 }
@@ -148,8 +150,8 @@ export function goPolicyIndex() {
 }
 
 /** 打开某案例的政策工具页 */
-export function goCasePolicy(caseId) {
-  navigate(VIEW.CASE_POLICY, { caseId: String(caseId).padStart(2, '0') });
+export function goCasePolicy(caseId, options) {
+  navigate(VIEW.CASE_POLICY, { caseId: String(caseId).padStart(2, '0') }, options);
 }
 
 /** 打开相关资料总览页 */
@@ -158,8 +160,8 @@ export function goSourcesIndex() {
 }
 
 /** 打开某案例的相关资料页 */
-export function goCaseSources(caseId) {
-  navigate(VIEW.CASE_SOURCES, { caseId: String(caseId).padStart(2, '0') });
+export function goCaseSources(caseId, options) {
+  navigate(VIEW.CASE_SOURCES, { caseId: String(caseId).padStart(2, '0') }, options);
 }
 
 /** 打开 fsQCA 评分页（可带初始案例） */

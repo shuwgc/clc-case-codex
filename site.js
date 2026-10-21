@@ -6,7 +6,7 @@ const featureData = {
   domain:{number:'01',label:'域内全文检索',subtitle:'让收录资料可以被检索',title:'从关键词，直达材料与出处。',description:'在本库案例、政策工具及已收录来源文本中检索，借助命中片段、条件筛选和关联定位，减少来回翻找材料。',points:['关键词组合、仅正文与多维条件筛选','命中片段高亮，关联案例、工具与材料出处'],boundary:'仅覆盖已收录的可检索文本；只有元数据的条目不等同于完整正文。',image:'current-domain-search.jpg',caption:'域内正文检索 · 真实本地命中与片段高亮'},
   corpus:{number:'02',label:'域外收录',subtitle:'把库外公开材料带入研究',title:'让域外材料，有出处、有时间。',description:'将维护端收录的政府公开资料组织成可检索快照，按主题、地区、内容类型和关联情况筛选，逐条查看来源与已提取正文。',points:['多个土地管理主题的外部资料快照','公开来源、收录范围与正文状态清楚区分'],boundary:'域外收录来自维护端发布的离线快照；内容覆盖范围不等于全网，也不等于自动核验。',image:'current-external-corpus.jpg',caption:'域外离线收录 · 已发布快照与真实条目'},
   online:{number:'03',label:'域外在线检索域',subtitle:'连接已批准的政府公开来源',title:'从已批准来源，检索新的线索。',description:'在独立在线检索区域输入主题词，向已批准来源发起检索，并查看来源状态、相关标题与原始链接，为后续人工核验提供线索。',points:['按来源反馈检索状态，保留已取回结果','在线入口与本地快照分开，区分自动取回和跳转'],boundary:'在线条目需要联网且尚待人工核验，不会自动进入已发布快照。本图展示来源配置与输入状态，未伪造联网结果。',image:'current-online-search.jpg',caption:'在线检索区域 · 已批准来源清单，尚未提交查询'},
-  rules:{number:'04',label:'fsQCA细则色块',subtitle:'在色块之间看见差异与证据',title:'比较细则，也能回到评分依据。',description:'用五档色阶组织案例与细则，横向比较同一细则、纵向查看单案差异。色块是进入细则说明、原始评分与关联证据的入口。',points:['35项细则分别解释含义，并保留案例评分理由与证据','点击直接定位、高亮对应详情与色格，左侧箭头可返回'],boundary:'颜色表达编码档位和状态，不是政策优劣排名。截图保留当前软件状态，论文测量口径仍按研究复核流程完善。',image:'current-fsqca-rules.jpg',caption:'细则释义 · 已定位高亮与左侧返回箭头'},
+  rules:{number:'04',label:'fsQCA细则色块',subtitle:'在色块之间看见差异与证据',title:'比较细则，也能回到评分依据。',description:'用五档色阶组织案例与细则，横向比较同一细则、纵向查看单案差异。色块是进入细则说明、原始评分与关联证据的入口。',points:['35项细则分别解释含义，并保留案例评分理由与证据','索引定位后显示返回箭头；主动切换栏目即隐藏'],boundary:'颜色表达编码档位和状态，不是政策优劣排名。截图保留当前软件状态，论文测量口径仍按研究复核流程完善。',image:'current-fsqca-rules.jpg',caption:'细则释义 · 已定位高亮与左侧返回箭头'},
   qca:{number:'05',label:'组态分析',subtitle:'用条件组合理解不同的实践路径',title:'比较条件组合，而不止单个因素。',description:'选择结果与条件，设置校准及筛选参数，查看真值表和组态解。在参数变化之间检查路径，结合案例证据理解结果。',points:['结果、条件与参数可配置，查看真值表和组态解','以可见参数记录分析过程，支持导出与回看'],boundary:'截图是交互分析界面，输出随数据与参数变化；历史必要性口径仍待纠正，不将当前数值作为论文结论。',image:'current-configurations.jpg',caption:'组态分析交互 · 真值表与解项，非论文结论发布'}
 };
 Object.assign(featureData.domain,{number:'04',subtitle:'资料检索',title:'跨案例检索已收录文本'});
@@ -84,18 +84,29 @@ if(document.body.dataset.page==='home'||document.body.dataset.page==='versions')
 document.querySelectorAll('[data-version-filter]').forEach(button=>button.addEventListener('click',()=>{versionFilter=button.dataset.versionFilter;document.querySelectorAll('[data-version-filter]').forEach(item=>item.setAttribute('aria-pressed',String(item===button)));renderReleases();}));
 
 
-// Return from page/section indexes to the preceding public-site reading position.
+// Only contextual indexes own a return journey; primary navigation ends it.
 (()=>{
-  const key='clc-site-location-history-067', restoreKey=key+'-restore';
-  let positions=[];try{positions=JSON.parse(sessionStorage.getItem(key)||'[]');}catch{}
+  const key='clc-site-location-history-067', restoreKey=key+'-restore', arrivalKey=key+'-arrival';
+  const read=(name,fallback)=>{try{return JSON.parse(sessionStorage.getItem(name))||fallback;}catch{return fallback;}};
+  let positions=read(key,[]);
+  const arrival=read(arrivalKey,null);sessionStorage.removeItem(arrivalKey);
+  if(arrival!==location.href){positions=[];sessionStorage.removeItem(restoreKey);}
   const save=()=>sessionStorage.setItem(key,JSON.stringify(positions.slice(-40)));
+  save();
   const back=element('button','site-location-back');back.type='button';back.setAttribute('aria-label','返回上一位置');back.innerHTML='<span aria-hidden="true">←</span><small>返回</small>';back.hidden=!positions.length;document.body.append(back);
-  const restore=()=>{if(document.querySelector('#releases .skeleton'))return;let pending;try{pending=JSON.parse(sessionStorage.getItem(restoreKey)||'null');}catch{}if(pending&&pending.url===location.href){sessionStorage.removeItem(restoreKey);requestAnimationFrame(()=>window.scrollTo({top:pending.y,left:pending.x,behavior:'instant'}));}};
-  restore();addEventListener('pageshow',restore);document.addEventListener('clc-release-ready',restore);
+  const clear=()=>{positions=[];save();sessionStorage.removeItem(arrivalKey);sessionStorage.removeItem(restoreKey);back.hidden=true;};
+  const restore=()=>{if(document.querySelector('#releases .skeleton'))return;const pending=read(restoreKey,null);if(pending&&pending.url===location.href){sessionStorage.removeItem(restoreKey);requestAnimationFrame(()=>window.scrollTo({top:pending.y,left:pending.x,behavior:'instant'}));}};
+  restore();addEventListener('pageshow',event=>{if(event.persisted)clear();else restore();});document.addEventListener('clc-release-ready',restore);
   document.addEventListener('click',event=>{
-    const link=event.target.closest('a[href]');if(!link||link.target==='_blank'||event.ctrlKey||event.metaKey||event.shiftKey)return;
-    const destination=new URL(link.href,location.href);if(destination.origin!==location.origin||/\/app\.html$/.test(destination.pathname)||!destination.pathname.endsWith('.html')&&destination.pathname!==location.pathname)return;
-    if(destination.href===location.href)return;positions.push({url:location.href,x:scrollX,y:scrollY});save();back.hidden=false;
-  });
-  back.addEventListener('click',()=>{const previous=positions.pop();if(!previous)return;save();back.hidden=!positions.length;if(previous.url.split('#')[0]===location.href.split('#')[0]){history.replaceState(null,'',previous.url);window.scrollTo({top:previous.y,left:previous.x,behavior:'instant'});}else{sessionStorage.setItem(restoreKey,JSON.stringify(previous));location.assign(previous.url);}});
+    const link=event.target.closest('a[href]');if(!link||link.target==='_blank'||event.ctrlKey||event.metaKey||event.shiftKey||event.altKey||event.button!==0)return;
+    const destination=new URL(link.href,location.href);
+    if(link.closest('.site-header, .site-footer')||/\/app\.html$/.test(destination.pathname)){clear();return;}
+    if(destination.origin!==location.origin)return;
+    // A hash or explicit locator identifies an index destination. Ordinary page links are direct.
+    if(!destination.hash&&!link.hasAttribute('data-location-index')){clear();return;}
+    if(destination.href===location.href)return;
+    positions.push({url:location.href,x:scrollX,y:scrollY});save();back.hidden=false;
+    if(destination.pathname!==location.pathname)sessionStorage.setItem(arrivalKey,JSON.stringify(destination.href));
+  },true);
+  back.addEventListener('click',()=>{const previous=positions.pop();if(!previous)return;save();back.hidden=!positions.length;if(previous.url.split('#')[0]===location.href.split('#')[0]){history.replaceState(null,'',previous.url);window.scrollTo({top:previous.y,left:previous.x,behavior:'instant'});}else{sessionStorage.setItem(restoreKey,JSON.stringify(previous));sessionStorage.setItem(arrivalKey,JSON.stringify(previous.url));location.assign(previous.url);}});
 })();

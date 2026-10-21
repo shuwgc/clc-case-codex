@@ -1,5 +1,5 @@
 import { RULE_DEFINITIONS } from '../../data/fsqca-rule-definitions.js';
-import { registerNavigationContext, isRestoringNavigation, rememberNavigation, jumpToTarget } from '../core/navigation-history.js';
+import { registerNavigationContext, isRestoringNavigation, rememberNavigation, clearNavigationHistory, jumpToTarget } from '../core/navigation-history.js';
 import { $, esc, delegate } from '../core/dom.js';
 import { openExternal, notify } from '../core/desktop.js';
 import { getState, navigate, VIEW } from '../core/state.js';
@@ -241,13 +241,13 @@ function locateSelectedRule(page) {
 }
 
 function bind(page) {
-  delegate(page, '.fsqca-tab', 'click', (e, el) => switchTab(page, el.dataset.tab));
-  delegate(page, '#fsqcaCaseSelect', 'change', (e, el) => { ui.caseId = el.value; ui.selectedRule = null; renderBody(page); });
+  delegate(page, '.fsqca-tab', 'click', (e, el) => { clearNavigationHistory(); switchTab(page, el.dataset.tab); });
+  delegate(page, '#fsqcaCaseSelect', 'change', (e, el) => { clearNavigationHistory(); ui.caseId = el.value; ui.selectedRule = null; renderBody(page); });
   delegate(page, '[data-rule]', 'click', (e, el) => { rememberNavigation(); ui.selectedRule = el.dataset.rule; renderBody(page); locateSelectedRule(page); });
   delegate(page, '[data-action="open"]', 'click', (e, el) => { e.preventDefault(); const u = el.dataset.url; if (u) void openExternal(u); });
   delegate(page, '[data-local-kind]', 'click', (_e, el) => {
     navigate(el.dataset.localKind === 'tool' ? VIEW.CASE_POLICY : VIEW.CASE_SOURCES,
-      { caseId: ui.caseId, [el.dataset.localKind === 'tool' ? 'toolNo' : 'sourceNo']: el.dataset.localKey });
+      { caseId: ui.caseId, [el.dataset.localKind === 'tool' ? 'toolNo' : 'sourceNo']: el.dataset.localKey }, { index: true });
   });
   delegate(page, '[data-score]', 'click', (_e, el) => {
     if (!ui.selectedRule) return;

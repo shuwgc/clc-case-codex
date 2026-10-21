@@ -1,5 +1,5 @@
 import { jumpToTarget, isRestoringNavigation } from '../core/navigation-history.js';
-import { registerNavigationContext, rememberNavigation } from '../core/navigation-history.js';
+import { registerNavigationContext, rememberNavigation, dismissNavigation } from '../core/navigation-history.js';
 /* ================================================================
  * 组件：单案例「查看相关资料」页
  * ----------------------------------------------------------------
@@ -260,7 +260,7 @@ function renderPager(d) {
 /* ---------- 交互：摘录阅读器 ---------- */
 
 function bind(page, d) {
-  delegate(page, '[data-local-read]', 'click', (_e, btn) => navigate(VIEW.RESEARCH, {recordId:`source:${d.id}:${btn.dataset.localRead}`}));
+  delegate(page, '[data-local-read]', 'click', (_e, btn) => navigate(VIEW.RESEARCH, {recordId:`source:${d.id}:${btn.dataset.localRead}`}, { index: true }));
   delegate(page, '[data-nav="library"]', 'click', () => goLibrary());
   delegate(page, '[data-nav="sources"]', 'click', () => goSourcesIndex());
   delegate(page, '[data-case-src]', 'click', (_e, btn) => {
@@ -293,7 +293,7 @@ registerNavigationContext('excerpt', () => activeExcerpt ? { ...activeExcerpt, s
 function openExcerpt(caseId, no) {
   const e = getExcerpt(caseId, no);
   if (!e) return;
-  rememberNavigation();
+  rememberNavigation({ scope: "excerpt" });
   activeExcerpt = { caseId, no };
   const host = safeHost(e.url);
 
@@ -324,6 +324,7 @@ function openExcerpt(caseId, no) {
   document.body.style.overflow = 'hidden';
 
   const close = () => {
+    dismissNavigation("excerpt");
     activeExcerpt = null;
     overlay.remove();
     document.body.style.overflow = '';

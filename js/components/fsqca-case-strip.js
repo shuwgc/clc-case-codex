@@ -38,6 +38,6 @@ export function initEvidenceLinks() {
     event.stopPropagation();
     document.getElementById('modalClose')?.click();
     document.querySelector('.arc-overlay [data-arc-close]')?.click();
-    navigate(VIEW.FSQCA, { caseId: target.dataset.evidenceCase, ruleCode: target.dataset.evidenceRule });
+    navigate(VIEW.FSQCA, { caseId: target.dataset.evidenceCase, ruleCode: target.dataset.evidenceRule }, { index: true });
   }, true);
 }

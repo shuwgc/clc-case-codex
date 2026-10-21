@@ -326,7 +326,7 @@ function card(e) {
 
 function bind(page) {
   delegate(page, '[data-nav]', 'click', () => goLibrary());
-  delegate(page, '[data-case]', 'click', (_e, el) => goCaseSources(el.dataset.case));
+  delegate(page, '[data-case]', 'click', (_e, el) => goCaseSources(el.dataset.case, { index: true }));
 
   /* 分类分布条 → 筛选案例（再次点击取消） */
   delegate(page, '.mech-row[data-cat]', 'click', (_e, row) => {

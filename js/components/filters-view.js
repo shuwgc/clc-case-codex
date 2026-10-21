@@ -1,4 +1,4 @@
-import { rememberNavigation } from '../core/navigation-history.js';
+import { clearNavigationHistory } from '../core/navigation-history.js';
 /* ================================================================
  * 组件：批次分段选择、地区标签、顶部下拉菜单
  * ================================================================ */
@@ -57,9 +57,10 @@ export function renderNavMenus(state) {
     ).join('');
 
     delegate(batchMenu, '[data-batch]', 'click', (_e, btn) => {
+      clearNavigationHistory();
       setBatch(btn.dataset.batch);
       closeNav();
-      scrollToEl($('cases'));
+      scrollToEl($('cases'), 64, false);
     });
   }
 
@@ -71,9 +72,10 @@ export function renderNavMenus(state) {
 
     delegate(provinceMenu, '[data-prov]', 'click', (_e, btn) => {
       // 下拉里点省份是"选中"语义，若已是当前省份则取消
+      clearNavigationHistory();
       toggleProvince(btn.dataset.prov);
       closeNav();
-      scrollToEl($('cases'));
+      scrollToEl($('cases'), 64, false);
     });
   }
 }
@@ -217,7 +219,6 @@ export function initNav() {
       event.preventDefault();
       const hash = (link.getAttribute('href') || '').replace('#', '');
       closeNav();
-      rememberNavigation();
       goLibrary();
       if (hash && hash !== 'top') {
         requestAnimationFrame(() => scrollToEl($(hash), 64, false));

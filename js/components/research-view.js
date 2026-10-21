@@ -1,4 +1,4 @@
-import { registerNavigationContext, isRestoringNavigation, rememberNavigation, jumpToTarget } from '../core/navigation-history.js';
+import { registerNavigationContext, isRestoringNavigation, rememberNavigation, returnToPrevious, jumpToTarget } from '../core/navigation-history.js';
 import { $, esc } from '../core/dom.js';
 import { createResearchIndex, highlightText } from '../core/research.js';
 import { getState, navigate, VIEW } from '../core/state.js';
@@ -361,7 +361,7 @@ function bind(page) {
         void renderResearch(getState()).catch(error => surfaceActionError(page, error, epoch, recordId));
       } else if (action === 'back') {
         ui.restoreList = true;
-        navigate(VIEW.RESEARCH, {});
+        void returnToPrevious().then(restored => { if (!restored) navigate(VIEW.RESEARCH, {}); });
       } else if ((action === 'previous' || action === 'next') && !recordId && latest) {
         const previousQuery = ui.query;
         captureSearch(page);
@@ -379,11 +379,11 @@ function bind(page) {
             ui.restoreList = true;
             ui.readerHit = { recordId: record.id, partIndex: latest?.results.find(hit => hit.record.id === record.id)?.partIndex ?? -1 };
           }
-          if (action === 'read') navigate(VIEW.RESEARCH, { recordId: record.id });
+          if (action === 'read') navigate(VIEW.RESEARCH, { recordId: record.id }, { index: true });
           else {
             const target = record.target;
             if (!target?.view) throw new Error('该条目没有可定位的关联页面。');
-            navigate(target.view, { ...target, searchQuery: ui.query, returnToResearch: true });
+            navigate(target.view, { ...target, searchQuery: ui.query, returnToResearch: true }, { index: true });
           }
         }
       }
