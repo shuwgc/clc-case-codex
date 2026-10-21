@@ -1,3 +1,4 @@
+import { returnToPrevious } from './navigation-history.js';
 import { navigate, VIEW, getState } from './state.js';
 import { parseQuery } from './research.js';
 
@@ -7,7 +8,7 @@ export function applyResearchTarget(page, params) {
   back.type = 'button';
   back.className = 'research-return';
   back.textContent = '返回研究检索';
-  back.onclick = () => navigate(VIEW.RESEARCH, {});
+  back.onclick = () => void returnToPrevious().then(restored => { if (!restored) navigate(VIEW.RESEARCH, {}); });
   page.prepend(back);
   let target;
   if (params.toolNo != null) target = [...page.querySelectorAll('[data-tool-no]')].find(el => el.dataset.toolNo === String(params.toolNo));
