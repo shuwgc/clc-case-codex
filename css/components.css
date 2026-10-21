@@ -684,3 +684,13 @@
   .dist-row { grid-template-columns: 52px 1fr 36px; }
   .filter-hint { margin-left: 0; }
 }
+/* Persistent, named return control for route and section indexes (0.6.7). */
+.navigation-back { position: fixed; inset-inline-start: 8px; top: 48%; z-index: 10001; display: flex; flex-direction: column; align-items: center; gap: 2px; min-width: 44px; min-height: 52px; padding: 5px; border: 1px solid #8fbda1; border-radius: 9px; background: #123d2b; color: #fff; box-shadow: 0 2px 10px #0004; cursor: pointer; }
+.navigation-back[hidden] { display: none; }
+.navigation-back span { font-size: 24px; line-height: 1; }
+.navigation-back small { font-size: 11px; }
+.navigation-back:hover { background: #1a563b; }
+.navigation-back:focus-visible { outline: 3px solid #ffdc85; outline-offset: 3px; }
+.navigation-back:disabled { opacity: .6; cursor: wait; }
+.navigation-target { outline: 3px solid #f1cf76 !important; outline-offset: 3px; scroll-margin-block: 90px; }
+@media (max-width: 600px) { .navigation-back { top: auto; bottom: 18px; inset-inline-start: 8px; } }
