@@ -1,0 +1,101 @@
+[
+  {
+    "file": "current-domain-search.jpg",
+    "version": "0.6.7",
+    "state": "域内全文检索；农民；仅来源正文；真实本地命中与高亮",
+    "generatedAt": "2026-10-21T16:06:13.505Z",
+    "width": 1440,
+    "height": 1000,
+    "sha256": "3cd9a3050cc27b0ec6f7b836876ea55af649fff6a24f8f4df2bec3b5f334160a"
+  },
+  {
+    "file": "current-external-corpus.jpg",
+    "version": "0.6.7",
+    "state": "域外离线收录；随包快照真实条目与出处；默认排除与本库重合",
+    "generatedAt": "2026-10-21T16:06:14.903Z",
+    "width": 1440,
+    "height": 1000,
+    "sha256": "e36f20d94b267144a8b94765c944fc9ddf77cd1307cab19a85037fde837fcb37"
+  },
+  {
+    "file": "current-online-search.jpg",
+    "version": "0.6.7",
+    "state": "在线检索域；输入主题词并展开当前已批准来源清单；未提交联网检索，无在线结果",
+    "generatedAt": "2026-10-21T16:06:15.668Z",
+    "width": 1440,
+    "height": 1000,
+    "sha256": "66ee25567f7fc51fcec9ccfa3cf9a6a460b09aec0d74ed2d405ea69d5dafed57"
+  },
+  {
+    "file": "current-fsqca-rules.jpg",
+    "version": "0.6.7",
+    "state": "fsQCA编码评分；案例01 CAP-1；通用释义、定位高亮与左侧返回箭头",
+    "generatedAt": "2026-10-21T16:06:16.520Z",
+    "width": 1440,
+    "height": 1000,
+    "sha256": "acce71f30b9d62d5e280554e13302ffdf46a69404521fed32c6eb0ebd17b2aed"
+  },
+  {
+    "file": "current-fsqca-evidence.jpg",
+    "version": "0.6.7",
+    "state": "fsQCA细则评分；案例01，CAP-1；原始评分、观测要点与证据链；未作本地评分修订",
+    "generatedAt": "2026-10-21T16:06:17.278Z",
+    "width": 1440,
+    "height": 1000,
+    "sha256": "acce71f30b9d62d5e280554e13302ffdf46a69404521fed32c6eb0ebd17b2aed"
+  },
+  {
+    "file": "current-qca-truth-table.jpg",
+    "version": "0.6.7",
+    "state": "组态分析交互模块；默认参数实际运行后的真值表；不是论文结论",
+    "generatedAt": "2026-10-21T16:06:17.902Z",
+    "width": 1440,
+    "height": 1000,
+    "sha256": "a8e502c258dac2123f043c27898b9f3e7baf12433525542b6c2e02c4deaaa639"
+  },
+  {
+    "file": "current-configurations.jpg",
+    "version": "0.6.7",
+    "state": "组态分析交互模块；默认参数实际运行后的复杂解、简约解与中间解假设提示；不是论文结论",
+    "generatedAt": "2026-10-21T16:06:18.454Z",
+    "width": 1440,
+    "height": 1000,
+    "sha256": "8f474b363362c147e505b1e7c989d69e3fa96a744cefa1007cebd76a9ffd9532"
+  },
+  {
+    "file": "current-home.jpg",
+    "version": "0.6.7",
+    "state": "程序主页顶部；真实航拍背景、项目名称、检索入口、统计与导航",
+    "generatedAt": "2026-10-21T15:59:27.613Z",
+    "width": 1440,
+    "height": 1000,
+    "sha256": "3c82ec3e7d07a97b41fa060817cbcdc134a3e02ac458ea76b9f261657b23cdfb"
+  },
+  {
+    "file": "current-case-cards.jpg",
+    "version": "0.6.7",
+    "state": "程序案例库网格；原始案例卡、地域批次、整治标签及变量色块",
+    "generatedAt": "2026-10-21T15:59:28.417Z",
+    "width": 1440,
+    "height": 1000,
+    "sha256": "d574ecddb7e8fb82700f5d698f6be27d6234c18377162255968511d0063f66ef"
+  },
+  {
+    "file": "current-policy-tools.jpg",
+    "version": "0.6.7",
+    "state": "案例01政策工具；展开真实地方政策工具，内容、创新点、牵头单位、依据及变量标签",
+    "generatedAt": "2026-10-21T15:59:29.347Z",
+    "width": 1440,
+    "height": 1000,
+    "sha256": "f9593a27dc3e4eb22eda5255fc9992e2707332134a8916a563c27214a1ae0d9b"
+  },
+  {
+    "file": "current-source-trace.jpg",
+    "version": "0.6.7",
+    "state": "案例11相关资料；真实承载来源、发布日期、原文提要、变量关联字母、全文摘录及打开原文入口",
+    "generatedAt": "2026-10-21T15:59:30.233Z",
+    "width": 1440,
+    "height": 1000,
+    "sha256": "e3598403ff6e5864599170eb41ff06e102e38af979d5fbab12c2615300d30676"
+  }
+]
