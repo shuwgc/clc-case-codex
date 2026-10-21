@@ -420,6 +420,25 @@
           "provenance": "来自该安装包提取的 app.asar（包内版本 1.0.0）；2026-10-20 本地重现。早期归档文件名标为 1.1，其内部 package.json 仍为 1.0.0；这里保留归档编号并如实注明。"
         }
       ]
+    },
+    {
+      "id": "v067",
+      "version": "0.6.7",
+      "label": "细则释义与定位返回",
+      "bytes": 89744721,
+      "sha256": "05fabcb10bb500df72833915ed8b5d27ae2d9664e61e73d232d1fb2e053e45b0",
+      "summary": "补充35项fsQCA细则通用释义；点击定位高亮并标记对应色格；左侧返回恢复原页面、细则、筛选与阅读位置。",
+      "date": "2026-10-22",
+      "legacy": false,
+      "downloadUrl": "https://github.com/shuwgc/clc-case-codex/releases/download/v0.6.7/CLC-v067-x64.exe",
+      "publicationStatus": "published",
+      "screenshots": [
+        {
+          "src": "assets/history/v067-detail.jpg",
+          "caption": "细则释义、定位高亮与左侧返回箭头",
+          "provenance": "0.6.7源码真实渲染；与安装包的运行时文件逐一比对后发布。"
+        }
+      ]
     }
   ],
   "missingInstallers": [
