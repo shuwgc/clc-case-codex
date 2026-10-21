@@ -1,3 +1,4 @@
+import { registerNavigationContext, isRestoringNavigation, rememberNavigation, jumpToTarget } from '../core/navigation-history.js';
 /* ================================================================
  * 组件：单案例「查看政策工具」页
  * ----------------------------------------------------------------
@@ -33,6 +34,8 @@ const I_ARROW_R = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" a
 
 /* ---------- 页内筛选状态（不进入全局状态，页面重渲染时重置） ---------- */
 let ui = { mech: '', category: '', query: '' };
+registerNavigationContext('case-policy', () => ui, value => Object.assign(ui, value));
+
 
 /* ================================================================
  * 渲染
@@ -59,7 +62,7 @@ export function renderCasePolicy(state) {
   }
 
   /* 重置页内筛选 */
-  ui = { mech: '', category: '', scope: '', query: '' };
+  if (!isRestoringNavigation()) ui = { mech: '', category: '', scope: '', query: '' };
 
   page.innerHTML = `
     ${renderHero(data, project)}
@@ -75,6 +78,14 @@ export function renderCasePolicy(state) {
     </div>`;
 
   bind(page, data);
+  for (const [selector, key, attr] of [
+    ['#mechChips .pg-chip', 'mech', 'mech'],
+    ['[data-sub-mech]', 'mech', 'subMech'],
+    ['#catChips .pg-chip', 'category', 'cat'],
+    ['#scopeChips .pg-chip', 'scope', 'scope'],
+  ]) page.querySelectorAll(selector).forEach(button =>
+    button.classList.toggle('active', (button.dataset[attr] || '') === (ui[key] || '')));
+  page.querySelector('#toolSearch').value = ui.query;
 
   /* 每次进入新案例时回到顶部 */
   window.scrollTo({ top: 0, behavior: 'auto' });
@@ -82,7 +93,7 @@ export function renderCasePolicy(state) {
   if (toolNo) {
     const target = page.querySelector(`[data-tool-no="${CSS.escape(String(toolNo))}"]`);
     for (let el = target; el && el !== page; el = el.parentElement) if (el.tagName === 'DETAILS') el.open = true;
-    target?.scrollIntoView({block:'center'});
+    if (!isRestoringNavigation()) jumpToTarget(target, { record: false });
   }
 }
 
@@ -636,7 +647,7 @@ function bind(page, d) {
   delegate(page, '.dep-ref[data-doc]', 'click', (_e, el) => {
     const row = page.querySelector(`#doc-${el.dataset.doc}`);
     if (!row) return;
-    row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    jumpToTarget(row);
     row.style.transition = 'background .3s';
     row.style.background = 'var(--green-100)';
     setTimeout(() => { row.style.background = ''; }, 1400);

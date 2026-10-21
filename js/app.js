@@ -1,3 +1,4 @@
+import { initNavigationHistory, isRestoringNavigation } from './core/navigation-history.js';
 /* ================================================================
  * 应用入口：装配状态、视图与交互
  * ----------------------------------------------------------------
@@ -6,7 +7,7 @@
  * ================================================================ */
 
 import { PROJECTS } from '../data/projects.js';
-import { getState, subscribe, setQuery, resetFilters, validateState, VIEW, navigate } from './core/state.js';
+import { getState, subscribe, setState, setQuery, resetFilters, validateState, VIEW, navigate } from './core/state.js';
 import { getAppInfo, isDesktop, onMenuCommand, notify } from './core/desktop.js';
 
 import { initStats } from './components/stats.js';
@@ -59,14 +60,16 @@ function scheduleRender() {
 
 /** 立即渲染（初始化用，不走调度） */
 export function renderNow() {
-  render();
+  if (frameHandle !== null) { cancelAnimationFrame(frameHandle); frameHandle = null; }
+  if (timerHandle !== null) { clearTimeout(timerHandle); timerHandle = null; }
+  return render();
 }
 
-function render() {
+async function render() {
   const state = getState();
 
   /* 页面切换：案例库首页 / 政策工具总览 / 单案例政策工具页 */
-  syncView(state);
+  await syncView(state);
 
   if (state.view !== VIEW.LIBRARY) return;
 
@@ -90,7 +93,7 @@ function render() {
  */
 let lastViewKey = '';
 
-function syncView(state) {
+async function syncView(state) {
   const library = document.querySelector('.site-main-library');
   const pagePolicy = $('pagePolicy');
   const pageCase = $('pageCasePolicy');
@@ -130,8 +133,8 @@ function syncView(state) {
   const changed = key !== lastViewKey;
 
   /* 离开总览页时清掉页内状态：否则再回来会残留上次展开的透视结果 */
-  if (!isPolicy && lastViewKey.startsWith(VIEW.POLICY)) resetPolicyIndexState();
-  if (!isSources && lastViewKey.startsWith(VIEW.SOURCES)) resetSourcesIndexState();
+  if (!isRestoringNavigation() && !isPolicy && lastViewKey.startsWith(VIEW.POLICY)) resetPolicyIndexState();
+  if (!isRestoringNavigation() && !isSources && lastViewKey.startsWith(VIEW.SOURCES)) resetSourcesIndexState();
 
   lastViewKey = key;
 
@@ -151,10 +154,10 @@ function syncView(state) {
     renderCaseSources(state);
     playEnter(pageCaseSources);
   }
-  if (isResearch && changed) void renderResearch(state);
-  if (isExternal && changed) void renderExternalSearch(state);
-  if (isFsqca && changed) void renderFsqca(state);
-  if (changed && state.viewParams?.returnToResearch) {
+  if (isResearch && changed) await renderResearch(state);
+  if (isExternal && changed) await renderExternalSearch(state);
+  if (isFsqca && changed) await renderFsqca(state);
+  if (changed && !isRestoringNavigation() && state.viewParams?.returnToResearch) {
     const targetPage = isCase ? pageCase : isCaseSources ? pageCaseSources : isPolicy ? pagePolicy : null;
     if (targetPage) applyResearchTarget(targetPage, state.viewParams);
   }
@@ -223,6 +226,9 @@ async function bootstrap() {
     console.warn('案例数据存在问题：\n' + problems.join('\n'));
   }
 
+  initNavigationHistory({ getState, restore: async state => {
+    setState(state); lastViewKey = ''; await renderNow();
+  } });
   initStats();
   initNav();
   initSearch();
@@ -243,11 +249,11 @@ async function bootstrap() {
     const meta = $('footerMeta');
     const suffix = '制作维护：上海大学全域土地综合整治项目组 · 数据来源：自然资源部';
     if (meta) {
-      meta.textContent = isDesktop ? `${suffix} · v${info.version}` : suffix;
+      meta.textContent = isDesktop ? `${suffix} · v${info.version}` : `${suffix} · Web v0.6.7`;
     }
     document.title = isDesktop
       ? `${info.name} v${info.version}`
-      : '全域土地综合整治试点案例库';
+      : '全域土地综合整治试点案例库 · Web v0.6.7';
   } catch {
     /* 拿不到版本信息不影响主流程 */
   }

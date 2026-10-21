@@ -74,7 +74,7 @@ def check_site(root, require_downloads=False, remote=False):
             text = path.read_text(encoding='utf-8')
             check(not re.search(r'[A-Za-z]:[\\/]Users[\\/]|127\.0\.0\.1|localhost:|sourcePackage|sourceAsar', text), 'no local paths: ' + path.relative_to(root).as_posix())
     data = json.loads((root / 'releases.json').read_text(encoding='utf-8'))
-    check(len(data['installers']) == 19, '19 archived packages represented')
+    check(len(data['installers']) == 20, '20 archived packages represented')
     shots = set()
     pending = []
     for release in data['installers']:
@@ -95,7 +95,7 @@ def check_site(root, require_downloads=False, remote=False):
                     check(response.status == 200 and int(response.headers.get('Content-Length','0')) == release['bytes'], 'public download status and length: ' + release['id'])
             except Exception as error:
                 check(False, 'public download failed: ' + release['id'] + ' / ' + type(error).__name__)
-    check(len(shots) == 31, '31 distinct historical screenshots')
+    check(len(shots) == 32, '32 distinct release screenshots')
     if require_downloads:
         check(not pending, 'all release packages uploaded before publication')
     return {'checks': len(checks), 'errors': errors, 'pendingInstallers': pending, 'publicationReady': not pending and not errors, 'details': checks}

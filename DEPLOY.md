@@ -5,9 +5,9 @@
 ## 当前状态
 
 - 网页、字体、四组矢量背景、三组案例照片、八项程序快照均已准备。
-- releases.json保留12个版本的19个现存安装包及31张历史快照。
-- 19个安装包已公开上传至installer-archive-20261021归档。releases.json记录经核验的真实下载地址；同号构建保留独立附件。
-- 附件大小及GitHub SHA-256已逐一核验，当前0.6.6包另经完整下载比对；安装器不进入Git仓库。既有Web版保留于app.html。
+- releases.json收录13个版本、20份安装包及32张版本快照；其中19份安装包与31张历史截图为既有归档，0.6.7另行新增。
+- 19个历史安装包已公开上传至installer-archive-20261021归档；0.6.7通过独立v0.6.7发布。releases.json记录经核验的真实下载地址；同号构建保留独立附件。
+- 附件大小及GitHub SHA-256已逐一核验，历史0.6.6包另经完整下载比对，0.6.7按本轮验证说明核验；安装器不进入Git仓库。既有Web版保留于app.html。
 
 ## 本地审阅
 
@@ -35,7 +35,7 @@ python tools/publish_installers.py --inventory /path/to/versions-inventory.json 
 python tools/check_site.py --require-downloads --remote
 ```
 
-**严格检查通过后再合并/推送主分支并发布。**当前19个公开附件已经验证；以后添加版本时，仍须先上传并核验再启用下载入口。
+**严格检查通过后再合并/推送主分支并发布。**既有19个公开附件已经验证；以后添加版本时，仍须先上传并核验再启用下载入口。
 
 4. 确认仓库GitHub Pages的既有发布来源；本分支不修改账户权限、分支保护或Pages配置。部署完成后核对首页、versions.html、log.html、字体、背景、快照、各版本下载及手机导航。
 
@@ -52,3 +52,7 @@ Website Auditor返回PRO_REQUIRED，未得到本站审计评分。现有验证�
 安装包归档：https://github.com/shuwgc/clc-case-codex/releases/tag/installer-archive-20261021
 
 本次使用网页端上传既有安装包并核验公开附件。tools/publish_installers.py保留按版本发布的维护流程；重复发布前应先检查已有归档并使用当前releases.json地址。
+
+## 0.6.7同步
+
+Web版同步35项细则释义、定位高亮与统一返回；保留原有浏览器检索降级。当前截图于2026-10-21至22日从0.6.7真实渲染，公开元数据在assets/current-captures-067.json。安装包公开后验证文件大小与SHA-256，再启用releases.json下载链接。

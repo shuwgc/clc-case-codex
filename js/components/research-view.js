@@ -1,3 +1,4 @@
+import { registerNavigationContext, isRestoringNavigation, rememberNavigation, jumpToTarget } from '../core/navigation-history.js';
 import { $, esc } from '../core/dom.js';
 import { createResearchIndex, highlightText } from '../core/research.js';
 import { getState, navigate, VIEW } from '../core/state.js';
@@ -10,6 +11,8 @@ const ui = {
   filters: { mode: 'all', type: '', province: '', batch: '', coverage: '', level: '', category: '', from: '', to: '', bodyOnly: false },
   invalidDate: false, returnFocus: '', scrollTop: 0, restoreList: false, readerHit: null,
 };
+registerNavigationContext('research-view', () => ({ ui, terms: latest?.terms || [] }), value => { Object.assign(ui, value.ui); if (latest) latest = { ...latest, terms: value.terms }; });
+
 let corpus;
 let loading;
 let epoch = 0;
@@ -394,7 +397,7 @@ export async function renderResearch(state) {
   const recordId = String(state.viewParams?.recordId ?? '');
   if (!page || state.view !== VIEW.RESEARCH || !current(page, token, recordId)) return;
   const focus = rememberFocus(page);
-  if (Object.hasOwn(state.viewParams || {}, 'query') && !recordId) {
+  if (!isRestoringNavigation() && Object.hasOwn(state.viewParams || {}, 'query') && !recordId) {
     ui.query = ui.draft = String(state.viewParams.query || '');
     ui.filters.province = state.viewParams.province || '';
     ui.filters.batch = state.viewParams.batch || '';

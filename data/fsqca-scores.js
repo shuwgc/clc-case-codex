@@ -2,7 +2,7 @@
  * 只含「原样抽取」的编码评分数据；评分方法/校准/热力矩阵等逻辑在 src/renderer/js/core/fsqca.js。 */
 export const FSQCA_SCORES = {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-19T03:20:13.034Z",
+  "generatedAt": "2026-10-20T10:09:51.473Z",
   "caseCount": 47,
   "ruleCount": 1645,
   "ruleOrder": {
@@ -24085,7 +24085,12 @@ export const FSQCA_SCORES = {
           "source": "湖北日报",
           "title": "《以全域试点推动全域振兴》，2025年报道",
           "url": "",
-          "archive": "域外来源，未入库存档（0.6.4 核验补注）"
+          "archive": "域外来源，未入库存档（2026-10-20复查：unresolved-original）",
+          "review": {
+            "status": "unresolved-original",
+            "reviewedAt": "2026-10-20",
+            "reason": "未定位到所引标题、年份及搬迁数据均匹配的原报道。2025-09-23湖北日报相关专版未见1155户、40套及37套；近似标题的长江云报道页面标注2024-01-17且非湖北日报，亦未见1155户。相关正文不能替代E99原引文。"
+          }
         }
       ]
     },
@@ -41773,7 +41778,12 @@ export const FSQCA_SCORES = {
           "source": "自然资源部第三批典型案例解读",
           "title": "2025-07-07",
           "url": "",
-          "archive": "域外来源，未入库存档（0.6.4 核验补注）"
+          "archive": "域外来源，未入库存档（2026-10-20复查：conflicting-locality）",
+          "review": {
+            "status": "conflicting-locality",
+            "reviewedAt": "2026-10-20",
+            "reason": "未定位2025-07-07所指解读原文。发现2025-02-10长兴转载文：3237亩及1152亩归于胥仓村，但单季水稻亩产超1000公斤归于太湖街道百亩示范方。该文不能支持将全部数字归于胥仓村，且发布者城市生活加料包不能认证为部级原文。"
+          }
         }
       ]
     },
@@ -43621,7 +43631,12 @@ export const FSQCA_SCORES = {
           "source": "澎湃新闻",
           "title": "《西江镇：小田变大田 粮田变良田》，2024-12-09",
           "url": "",
-          "archive": "域外来源，未入库存档（0.6.4 核验补注）"
+          "archive": "域外来源，未入库存档（2026-10-20复查：unresolved-original）",
+          "review": {
+            "status": "unresolved-original",
+            "reviewedAt": "2026-10-20",
+            "reason": "按原题、日期、澎湃域名及最大田块2亩至12亩等线索检索，未定位到可确认的雷山县西江镇原页面。检索中的广东连州、江西会昌同名西江镇及其他地区小田变大田报道均排除；不得据此猜测澎湃文章ID或认定原文不存在。"
+          }
         }
       ]
     },
@@ -44491,4 +44506,4 @@ export const FSQCA_SCORES = {
     }
   ]
 };
-export const FSQCA_META = { schemaVersion: 1, caseCount: 47, ruleCount: 1645, contentHash: "0205897ac977ffdb" };
+export const FSQCA_META = { schemaVersion: 1, caseCount: 47, ruleCount: 1645, contentHash: "f8e29e29cbe6074b" };

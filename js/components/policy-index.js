@@ -1,3 +1,4 @@
+import { registerNavigationContext, isRestoringNavigation, rememberNavigation, jumpToTarget } from '../core/navigation-history.js';
 /* ================================================================
  * 组件：政策工具总览页（二级栏目）
  * ----------------------------------------------------------------
@@ -20,6 +21,8 @@ const I_EXT = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-
 /* 页内筛选状态 */
 const UI_BASE = { batch: '', province: '', mech: '', query: '', sort: 'id' };
 let ui = { ...UI_BASE };
+registerNavigationContext('policy-index', () => ui, value => Object.assign(ui, value));
+
 
 /**
  * 重置总览页的页内状态。
@@ -27,7 +30,7 @@ let ui = { ...UI_BASE };
  * 避免上次展开的「跨案例工具透视」残留在页面上。
  */
 export function resetPolicyIndexState() {
-  ui = { ...UI_BASE };
+  if (!isRestoringNavigation()) ui = { ...UI_BASE };
 }
 
 export function renderPolicyIndex(state) {
@@ -35,7 +38,7 @@ export function renderPolicyIndex(state) {
   if (!page) return;
   if (state.view !== VIEW.POLICY) return;
 
-  ui = { ...UI_BASE };
+  if (!isRestoringNavigation()) ui = { ...UI_BASE };
 
   page.innerHTML = `
     ${renderHero()}
@@ -48,6 +51,17 @@ export function renderPolicyIndex(state) {
     </div>`;
 
   bind(page);
+  // History restores the model before rendering; mirror it in all controls and
+  // rebuild the mechanism drill-down before restoring scroll and focus.
+  for (const [selector, key, attr] of [
+    ['#ovBatch .pg-chip', 'batch', 'batch'],
+    ['#ovProv .pg-chip', 'province', 'prov'],
+    ['#ovSort .pg-chip', 'sort', 'sort'],
+    ['.mech-row[data-mech]', 'mech', 'mech'],
+  ]) page.querySelectorAll(selector).forEach(button =>
+    button.classList.toggle('active', (button.dataset[attr] || '') === ui[key]));
+  page.querySelector('#ovSearch').value = ui.query;
+  renderDrill();
   window.scrollTo({ top: 0, behavior: 'auto' });
 }
 
@@ -498,7 +512,7 @@ function bind(page) {
   delegate(page, '.dep-ref[data-doc]', 'click', (_e, el) => {
     const row = page.querySelector(`#nat-doc-${el.dataset.doc}`);
     if (!row) return;
-    row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    jumpToTarget(row);
     row.style.transition = 'background .3s';
     row.style.background = 'var(--green-100)';
     setTimeout(() => { row.style.background = ''; }, 1400);

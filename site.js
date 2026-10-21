@@ -1,18 +1,18 @@
 'use strict';
 const featureData = {
-  overview:{number:'01',label:'程序主页',subtitle:'案例与证据',title:'程序主页与案例浏览',description:'从主页进入47个试点案例，按批次、地区和特征筛选；再查看单案介绍、政策工具与相关资料。',points:['第一、二、三批典型案例','案例、政策与资料入口集中呈现'],boundary:'快照来自当前0.6.6程序。界面内的研究统计遵循相应数据版本，不能替代具体材料核验。',image:'current-home.jpg',caption:'程序主页 · 导航、检索入口与案例库介绍'},
+  overview:{number:'01',label:'程序主页',subtitle:'案例与证据',title:'程序主页与案例浏览',description:'从主页进入47个试点案例，按批次、地区和特征筛选；再查看单案介绍、政策工具与相关资料。',points:['第一、二、三批典型案例','案例、政策与资料入口集中呈现'],boundary:'快照来自当前0.6.7程序。界面内的研究统计遵循相应数据版本，不能替代具体材料核验。',image:'current-home.jpg',caption:'程序主页 · 导航、检索入口与案例库介绍'},
   policy:{number:'02',label:'政策工具',subtitle:'案例与证据',title:'查看政策工具的实施内容与依据',description:'以泖港镇为例，展开“农民集中居住与村庄布局优化政策”，查看实施内容、创新点、牵头单位与依据文件，并通过字母标签关联研究变量。',points:['工具分类与条目展开','实施内容、创新点、主体和政策依据'],boundary:'政策条目是项目整理内容；核对政策适用范围与效力时，应返回对应原文。',image:'current-policy-tools.jpg',caption:'泖港镇 · 政策工具条目与依据文件'},
   sources:{number:'03',label:'资料溯源',subtitle:'案例与证据',title:'从材料提要回到原始出处',description:'逐条查看资料来源、发布日期、提要与已收录摘录；通过关联字母定位细则，通过原文入口核对报道内容。截图展示朱湖案例的来源条目。',points:['来源、日期、提要与原文入口','关联细则与全文摘录'],boundary:'提要、摘录和原始报道分开呈现。仅有元数据的条目不视为已收录完整正文。',image:'current-source-trace.jpg',caption:'朱湖案例 · 来源日期、提要、摘录与原文入口'},
   domain:{number:'01',label:'域内全文检索',subtitle:'让收录资料可以被检索',title:'从关键词，直达材料与出处。',description:'在本库案例、政策工具及已收录来源文本中检索，借助命中片段、条件筛选和关联定位，减少来回翻找材料。',points:['关键词组合、仅正文与多维条件筛选','命中片段高亮，关联案例、工具与材料出处'],boundary:'仅覆盖已收录的可检索文本；只有元数据的条目不等同于完整正文。',image:'current-domain-search.jpg',caption:'域内正文检索 · 真实本地命中与片段高亮'},
   corpus:{number:'02',label:'域外收录',subtitle:'把库外公开材料带入研究',title:'让域外材料，有出处、有时间。',description:'将维护端收录的政府公开资料组织成可检索快照，按主题、地区、内容类型和关联情况筛选，逐条查看来源与已提取正文。',points:['多个土地管理主题的外部资料快照','公开来源、收录范围与正文状态清楚区分'],boundary:'域外收录来自维护端发布的离线快照；内容覆盖范围不等于全网，也不等于自动核验。',image:'current-external-corpus.jpg',caption:'域外离线收录 · 已发布快照与真实条目'},
   online:{number:'03',label:'域外在线检索域',subtitle:'连接已批准的政府公开来源',title:'从已批准来源，检索新的线索。',description:'在独立在线检索区域输入主题词，向已批准来源发起检索，并查看来源状态、相关标题与原始链接，为后续人工核验提供线索。',points:['按来源反馈检索状态，保留已取回结果','在线入口与本地快照分开，区分自动取回和跳转'],boundary:'在线条目需要联网且尚待人工核验，不会自动进入已发布快照。本图展示来源配置与输入状态，未伪造联网结果。',image:'current-online-search.jpg',caption:'在线检索区域 · 已批准来源清单，尚未提交查询'},
-  rules:{number:'04',label:'fsQCA细则色块',subtitle:'在色块之间看见差异与证据',title:'比较细则，也能回到评分依据。',description:'用五档色阶组织案例与细则，横向比较同一细则、纵向查看单案差异。色块是进入细则说明、原始评分与关联证据的入口。',points:['47案例 × 35细则热力矩阵，缺失与不适用另行标记','细则详情与来源、政策工具建立回溯关系'],boundary:'颜色表达编码档位和状态，不是政策优劣排名。截图保留当前软件状态，论文测量口径仍按研究复核流程完善。',image:'current-fsqca-rules.jpg',caption:'细则热力矩阵 · 五档色阶与状态图例'},
+  rules:{number:'04',label:'fsQCA细则色块',subtitle:'在色块之间看见差异与证据',title:'比较细则，也能回到评分依据。',description:'用五档色阶组织案例与细则，横向比较同一细则、纵向查看单案差异。色块是进入细则说明、原始评分与关联证据的入口。',points:['35项细则分别解释含义，并保留案例评分理由与证据','点击直接定位、高亮对应详情与色格，左侧箭头可返回'],boundary:'颜色表达编码档位和状态，不是政策优劣排名。截图保留当前软件状态，论文测量口径仍按研究复核流程完善。',image:'current-fsqca-rules.jpg',caption:'细则释义 · 已定位高亮与左侧返回箭头'},
   qca:{number:'05',label:'组态分析',subtitle:'用条件组合理解不同的实践路径',title:'比较条件组合，而不止单个因素。',description:'选择结果与条件，设置校准及筛选参数，查看真值表和组态解。在参数变化之间检查路径，结合案例证据理解结果。',points:['结果、条件与参数可配置，查看真值表和组态解','以可见参数记录分析过程，支持导出与回看'],boundary:'截图是交互分析界面，输出随数据与参数变化；历史必要性口径仍待纠正，不将当前数值作为论文结论。',image:'current-configurations.jpg',caption:'组态分析交互 · 真值表与解项，非论文结论发布'}
 };
 Object.assign(featureData.domain,{number:'04',subtitle:'资料检索',title:'跨案例检索已收录文本'});
 Object.assign(featureData.corpus,{number:'05',subtitle:'资料检索',title:'域外公开资料的离线收录'});
 Object.assign(featureData.online,{number:'06',subtitle:'资料检索',title:'面向已批准来源的在线检索'});
-Object.assign(featureData.rules,{number:'07',subtitle:'评分与分析',title:'47案例 × 35细则的色块比较'});
+Object.assign(featureData.rules,{number:'07',subtitle:'评分与分析',title:'理解细则，定位证据并返回'});
 Object.assign(featureData.qca,{number:'08',subtitle:'评分与分析',title:'设置条件与参数，查看真值表和组态解'});
 const menuButton=document.querySelector('.menu-toggle');
 const siteNav=document.getElementById('site-nav');
@@ -33,7 +33,7 @@ function setFeature(key,focus=false){
   document.getElementById('feature-boundary').textContent=data.boundary;
   const shotTitle=document.getElementById('feature-shot-title');if(shotTitle)shotTitle.textContent=data.label;
   document.getElementById('feature-caption').textContent=data.caption+' · 点击放大';
-  const picture=document.getElementById('feature-image');picture.src=data.image;picture.alt=`v0.6.6 ${data.label}真实程序快照`;
+  const picture=document.getElementById('feature-image');picture.src=data.image;picture.alt=`v0.6.7 ${data.label}真实程序快照`;
   document.querySelector('[data-current-image]').setAttribute('aria-label',`放大${data.label}截图`);
   const panel=document.getElementById('feature-panel');panel.setAttribute('aria-labelledby',`tab-${key}`);panel.classList.remove('changed');requestAnimationFrame(()=>panel.classList.add('changed'));
 }
@@ -41,8 +41,8 @@ document.querySelectorAll('[data-feature]').forEach(button=>{
   button.addEventListener('click',()=>setFeature(button.dataset.feature));
   button.addEventListener('keydown',event=>{const keys=Object.keys(featureData),index=keys.indexOf(button.dataset.feature);let target=null;if(event.key==='ArrowRight'||event.key==='ArrowDown')target=keys[(index+1)%keys.length];if(event.key==='ArrowLeft'||event.key==='ArrowUp')target=keys[(index+keys.length-1)%keys.length];if(event.key==='Home')target=keys[0];if(event.key==='End')target=keys[keys.length-1];if(target){event.preventDefault();setFeature(target,true);}});
 });
-document.querySelector('[data-current-image]')?.addEventListener('click',()=>{const data=featureData[activeFeature];showImage(data.image,`v0.6.6 · ${data.label}`,data.caption+'。'+data.boundary);});
-const groupsTitle={'0.6.6':'E99来源复查与原因展示','0.6.5':'分析展示与材料关联，保留同号修订','0.6.3':'统一深色配色与导航，改善分析界面','0.6.2':'在线检索可靠性与来源修复','0.6.1':'组态分析与真值表','0.6.0':'细则评分、热力矩阵与证据反查','0.5.5':'检索翻页、查询扩展与来源覆盖','0.5.3':'域外语料与在线来源扩展','0.4.0':'本地全文检索第一档','1.0.0':'首次桌面程序打包','1.0.1':'加入案例政策工具页面','1.1':'地方特色背景与案例视觉'};
+document.querySelector('[data-current-image]')?.addEventListener('click',()=>{const data=featureData[activeFeature];showImage(data.image,`v0.6.7 · ${data.label}`,data.caption+'。'+data.boundary);});
+const groupsTitle={'0.6.7':'细则释义、定位高亮与返回','0.6.6':'E99来源复查与原因展示','0.6.5':'分析展示与材料关联，保留同号修订','0.6.3':'统一深色配色与导航，改善分析界面','0.6.2':'在线检索可靠性与来源修复','0.6.1':'组态分析与真值表','0.6.0':'细则评分、热力矩阵与证据反查','0.5.5':'检索翻页、查询扩展与来源覆盖','0.5.3':'域外语料与在线来源扩展','0.4.0':'本地全文检索第一档','1.0.0':'首次桌面程序打包','1.0.1':'加入案例政策工具页面','1.1':'地方特色背景与案例视觉'};
 function element(tag,className,text){const el=document.createElement(tag);if(className)el.className=className;if(text!==undefined)el.textContent=text;return el;}
 let loadedReleases=[];let loadedMissing=[];let versionFilter='all';
 function renderReleases(){
@@ -50,9 +50,9 @@ function renderReleases(){
   const grouped=new Map();for(const release of loadedReleases){if(versionFilter==='legacy'&&!release.legacy)continue;if(versionFilter!=='all'&&versionFilter!=='legacy'&&!release.version.startsWith(versionFilter))continue;if(!grouped.has(release.version))grouped.set(release.version,[]);grouped.get(release.version).push(release);}
   const versions=[...grouped.keys()].sort((a,b)=>Number(Boolean(grouped.get(a)[0].legacy))-Number(Boolean(grouped.get(b)[0].legacy))||b.localeCompare(a,undefined,{numeric:true}));
   for(const version of versions){const builds=grouped.get(version);const entry=element('article','release-entry');entry.id='v'+version.replaceAll('.','-');
-    const head=element('header');head.append(element('div','release-v',(builds[0].legacy?'早期 v':'v')+version),element('div','release-date',builds[0].date||'历史归档'));if(version==='0.6.6')head.append(element('span','release-badge','当前版本'));else if(builds.length>1)head.append(element('span','release-badge',builds.length+' 个归档构建'));
+    const head=element('header');head.append(element('div','release-v',(builds[0].legacy?'早期 v':'v')+version),element('div','release-date',builds[0].date||'历史归档'));if(version==='0.6.7')head.append(element('span','release-badge','当前版本'));else if(builds.length>1)head.append(element('span','release-badge',builds.length+' 个归档构建'));
     const body=element('div');body.append(element('h2','',groupsTitle[version]||'版本更新'),element('p','summary',builds.length===1?builds[0].summary:`此版本保留 ${builds.length} 个归档构建，主要改动与具体界面分别记录。`));const list=element('div','build-list');
-    for(const build of builds){const row=element('div','build-row');const info=element('div');info.append(element('span','',build.label),element('span','build-size',`${(build.bytes/1024/1024).toFixed(1)} MiB · Windows x64`));if(builds.length>1)info.append(element('span','build-desc',build.summary));const ready=Boolean(build.downloadUrl);const download=element(ready?'a':'span',ready?(version==='0.6.6'?'current-download':''):'download-pending',ready?'下载安装包 ↓':'安装包待上传');if(ready)download.href=build.downloadUrl;else download.setAttribute('aria-disabled','true');download.setAttribute('aria-label',ready?`下载v${build.version} ${build.label}`:`v${build.version} ${build.label}安装包待上传`);row.append(info,download);list.append(row);}
+    for(const build of builds){const row=element('div','build-row');const info=element('div');info.append(element('span','',build.label),element('span','build-size',`${(build.bytes/1024/1024).toFixed(1)} MiB · Windows x64`));if(builds.length>1)info.append(element('span','build-desc',build.summary));const ready=Boolean(build.downloadUrl);const download=element(ready?'a':'span',ready?(version==='0.6.7'?'current-download':''):'download-pending',ready?'下载安装包 ↓':'安装包待上传');if(ready)download.href=build.downloadUrl;else download.setAttribute('aria-disabled','true');download.setAttribute('aria-label',ready?`下载v${build.version} ${build.label}`:`v${build.version} ${build.label}安装包待上传`);row.append(info,download);list.append(row);}
     body.append(list);if(builds.length>1)body.append(element('p','builds-note','同号构建分别保留。未留存逐构建说明时，不推定具体改动或推荐顺序。'));
     const shots=[];const seen=new Set();for(const build of builds){for(const shot of build.screenshots||[]){if(seen.has(shot.src))continue;seen.add(shot.src);shots.push({...shot,buildLabel:build.label});}}
     if(shots.length){const gallery=element('div','history-shots');for(const shot of shots){const button=element('button','history-shot');button.type='button';const caption=`${shot.buildLabel} · ${shot.caption||'改动处快照'}`;const img=element('img');img.src=shot.src;img.alt=`v${version} ${caption}`;img.loading='lazy';button.append(img,element('span','',caption+' ↗'));button.setAttribute('aria-label','放大'+img.alt);button.addEventListener('click',()=>showImage(shot.src,`v${version} · ${caption}`,shot.provenance||'由对应历史包只读渲染，保留当时界面与口径。'));gallery.append(button);}body.append(gallery);}else{body.append(element('p','no-shot','该构建历史截图尚待核验，不以现版界面替代。'));}
@@ -65,10 +65,10 @@ function renderReleases(){
 }
 function renderRecentReleases(){
   const target=document.getElementById('recent-releases');if(!target)return;target.replaceChildren();
-  for(const id of ['v066','v065-reviewed','v063-b']){
+  for(const id of ['v067','v066','v065-reviewed']){
     const release=loadedReleases.find(item=>item.id===id);if(!release)continue;
     const row=element('article','recent-release');
-    const label=element('div','recent-version','v'+release.version);label.append(element('small','',release.version==='0.6.6'?'当前版本':'历史版本'));
+    const label=element('div','recent-version','v'+release.version);label.append(element('small','',release.version==='0.6.7'?'当前版本':'历史版本'));
     const title=element('div','recent-title',groupsTitle[release.version]||release.summary);
     const actions=element('div','recent-actions');
     const ready=Boolean(release.downloadUrl);const download=element(ready?'a':'span',ready?'':'download-pending',ready?'下载 ↓':'安装包待上传');if(ready)download.href=release.downloadUrl;else download.setAttribute('aria-disabled','true');download.setAttribute('aria-label',(ready?'下载v':'待上传v')+release.version+' '+release.label);
@@ -78,7 +78,24 @@ function renderRecentReleases(){
     row.append(label,title,actions);target.append(row);
   }
 }
-async function loadReleaseData(){const response=await fetch('./releases.json',{cache:'no-store'});if(!response.ok)throw new Error('版本清单暂不可用');const data=await response.json();loadedReleases=data.installers;loadedMissing=data.missingInstallers||[];if(document.body.dataset.page==='versions')renderReleases();renderRecentReleases();const current=loadedReleases.find(item=>item.id==='v066');if(current&&document.getElementById('current-package-meta'))document.getElementById('current-package-meta').textContent=`${current.date} · Windows x64 · ${(current.bytes/1024/1024).toFixed(1)} MiB`;}
+async function loadReleaseData(){const response=await fetch('./releases.json',{cache:'no-store'});if(!response.ok)throw new Error('版本清单暂不可用');const data=await response.json();loadedReleases=data.installers;loadedMissing=data.missingInstallers||[];if(document.body.dataset.page==='versions')renderReleases();renderRecentReleases();const current=loadedReleases.find(item=>item.id==='v067');if(current&&document.getElementById('current-package-meta'))document.getElementById('current-package-meta').textContent=`${current.date} · Windows x64 · ${(current.bytes/1024/1024).toFixed(1)} MiB`;document.dispatchEvent(new Event('clc-release-ready'));}
 function showReleaseError(){for(const id of ['releases','recent-releases']){const target=document.getElementById(id);if(!target)continue;const message=element('p','history-load-error','版本清单暂时读取失败，请重试。');const retry=element('button','retry-button','重新读取版本');retry.type='button';retry.addEventListener('click',()=>{target.replaceChildren(element('p','skeleton','正在读取版本归档…'));loadReleaseData().catch(showReleaseError);});target.replaceChildren(message,retry);}}
 if(document.body.dataset.page==='home'||document.body.dataset.page==='versions')loadReleaseData().catch(showReleaseError);
 document.querySelectorAll('[data-version-filter]').forEach(button=>button.addEventListener('click',()=>{versionFilter=button.dataset.versionFilter;document.querySelectorAll('[data-version-filter]').forEach(item=>item.setAttribute('aria-pressed',String(item===button)));renderReleases();}));
+
+
+// Return from page/section indexes to the preceding public-site reading position.
+(()=>{
+  const key='clc-site-location-history-067', restoreKey=key+'-restore';
+  let positions=[];try{positions=JSON.parse(sessionStorage.getItem(key)||'[]');}catch{}
+  const save=()=>sessionStorage.setItem(key,JSON.stringify(positions.slice(-40)));
+  const back=element('button','site-location-back');back.type='button';back.setAttribute('aria-label','返回上一位置');back.innerHTML='<span aria-hidden="true">←</span><small>返回</small>';back.hidden=!positions.length;document.body.append(back);
+  const restore=()=>{if(document.querySelector('#releases .skeleton'))return;let pending;try{pending=JSON.parse(sessionStorage.getItem(restoreKey)||'null');}catch{}if(pending&&pending.url===location.href){sessionStorage.removeItem(restoreKey);requestAnimationFrame(()=>window.scrollTo({top:pending.y,left:pending.x,behavior:'instant'}));}};
+  restore();addEventListener('pageshow',restore);document.addEventListener('clc-release-ready',restore);
+  document.addEventListener('click',event=>{
+    const link=event.target.closest('a[href]');if(!link||link.target==='_blank'||event.ctrlKey||event.metaKey||event.shiftKey)return;
+    const destination=new URL(link.href,location.href);if(destination.origin!==location.origin||/\/app\.html$/.test(destination.pathname)||!destination.pathname.endsWith('.html')&&destination.pathname!==location.pathname)return;
+    if(destination.href===location.href)return;positions.push({url:location.href,x:scrollX,y:scrollY});save();back.hidden=false;
+  });
+  back.addEventListener('click',()=>{const previous=positions.pop();if(!previous)return;save();back.hidden=!positions.length;if(previous.url.split('#')[0]===location.href.split('#')[0]){history.replaceState(null,'',previous.url);window.scrollTo({top:previous.y,left:previous.x,behavior:'instant'});}else{sessionStorage.setItem(restoreKey,JSON.stringify(previous));location.assign(previous.url);}});
+})();

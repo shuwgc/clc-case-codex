@@ -1,3 +1,5 @@
+import { jumpToTarget, isRestoringNavigation } from '../core/navigation-history.js';
+import { registerNavigationContext, rememberNavigation } from '../core/navigation-history.js';
 /* ================================================================
  * 组件：单案例「查看相关资料」页
  * ----------------------------------------------------------------
@@ -77,7 +79,7 @@ export function renderCaseSources(state) {
   bind(page, d);
   window.scrollTo({ top: 0, behavior: 'auto' });
   const targetNo = state.viewParams?.sourceNo;
-  if (targetNo) page.querySelector(`[data-source-no="${CSS.escape(targetNo)}"]`)?.scrollIntoView({block:'center'});
+  if (targetNo && !isRestoringNavigation()) jumpToTarget(page.querySelector(`[data-source-no="${CSS.escape(targetNo)}"]`), { record: false });
 }
 
 /* ---------- 页头 ---------- */
@@ -284,9 +286,15 @@ function bind(page, d) {
 }
 
 /** 打开全文摘录阅读器 */
+let activeExcerpt = null;
+registerNavigationContext('excerpt', () => activeExcerpt ? { ...activeExcerpt, scroll: document.querySelector('.arc-body')?.scrollTop || 0 } : null, () => {}, value => {
+  if (value) { openExcerpt(value.caseId, value.no); const body = document.querySelector('.arc-body'); if (body) body.scrollTop = value.scroll; }
+});
 function openExcerpt(caseId, no) {
   const e = getExcerpt(caseId, no);
   if (!e) return;
+  rememberNavigation();
+  activeExcerpt = { caseId, no };
   const host = safeHost(e.url);
 
   const overlay = document.createElement('div');
@@ -316,6 +324,7 @@ function openExcerpt(caseId, no) {
   document.body.style.overflow = 'hidden';
 
   const close = () => {
+    activeExcerpt = null;
     overlay.remove();
     document.body.style.overflow = '';
     document.removeEventListener('keydown', onKey);

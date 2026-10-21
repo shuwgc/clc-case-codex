@@ -1,3 +1,4 @@
+import { rememberNavigation } from '../core/navigation-history.js';
 /* ================================================================
  * 组件：批次分段选择、地区标签、顶部下拉菜单
  * ================================================================ */
@@ -216,9 +217,10 @@ export function initNav() {
       event.preventDefault();
       const hash = (link.getAttribute('href') || '').replace('#', '');
       closeNav();
+      rememberNavigation();
       goLibrary();
       if (hash && hash !== 'top') {
-        requestAnimationFrame(() => scrollToEl($(hash)));
+        requestAnimationFrame(() => scrollToEl($(hash), 64, false));
       } else {
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }

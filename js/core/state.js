@@ -5,6 +5,8 @@
  * 避免原实现中各组件互相调用 render 造成的隐式耦合。
  * ================================================================ */
 
+import { rememberNavigation } from './navigation-history.js';
+
 import { PROJECTS, ALL } from '../../data/projects.js';
 
 /** 搜索模式 */
@@ -130,6 +132,7 @@ export function subscribe(fn) {
 /** 切换页面。params 用于携带页面上下文（如案例编号） */
 export function navigate(view, params = {}) {
   if (state.view === view && JSON.stringify(state.viewParams) === JSON.stringify(params)) return;
+  rememberNavigation();
   state = { ...state, view, viewParams: params };
   notify();
 }
