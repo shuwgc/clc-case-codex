@@ -99,6 +99,7 @@ function ruleDetail(caseData) {
         <span class="fsqca-ev-code">${esc(e.code)}</span>
         <span class="fsqca-ev-meta">${esc(e.type.replace(/结果侧补强（[^）]*）/, '补充来源'))} · ${esc(e.source)}</span>
         <p class="fsqca-ev-title">${esc(e.title)}</p>
+        ${e.review ? `<p class="fsqca-hint" data-evidence-review="${esc(e.review.status)}">来源复查（${esc(e.review.reviewedAt)}）：${esc(e.review.reason)}</p>` : ''}
         ${e.url ? `<a class="fsqca-ev-url" href="${esc(e.url)}" data-action="open" data-url="${esc(e.url)}">打开来源网址 ↗</a>` : ''}
         ${evidenceTargets(caseData.id, e.code).map(t => `<button type="button" class="fsqca-ev-url" data-local-kind="${t.kind}" data-local-key="${esc(t.key)}">查看${t.kind === 'tool' ? '政策工具 ' : '相关资料 '}${esc(t.key)}</button>`).join('')}
       </li>`).join('')}</ul>`
