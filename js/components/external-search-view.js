@@ -1,4 +1,4 @@
-import { registerNavigationContext, isRestoringNavigation, rememberNavigation, jumpToTarget } from '../core/navigation-history.js';
+import { registerNavigationContext, isRestoringNavigation, rememberNavigation, returnToPrevious, jumpToTarget } from '../core/navigation-history.js';
 import { $, esc } from '../core/dom.js';
 import { createExternalSearch } from '../core/external-search.js';
 import { highlightText } from '../core/research.js';
@@ -280,10 +280,10 @@ function bind(page) {
     const state=getState(); const id=String(state.viewParams?.recordId||''); const token=epoch;
     if (!current(page,token,id)) return;
     const action=control.dataset.action;
-    if(action==='back') { navigate(VIEW.EXTERNAL,{}); return; }
+    if(action==='back') { void returnToPrevious().then(restored=>{if(!restored)navigate(VIEW.EXTERNAL,{});}); return; }
     if(action==='retry') { loading=null; index=null; void renderExternalSearch(getState()); return; }
     if(action==='page'&&!id&&latest) { collect(page); ui.query=ui.draft; ui.offset=Math.max(0,ui.offset+Number(control.dataset.step)*PAGE_SIZE); update(page); return; }
-    if(action==='read'&&!id) { collect(page); ui.query=ui.draft; ui.scrollTop=window.scrollY; ui.focus=control.dataset.record; navigate(VIEW.EXTERNAL,{recordId:control.dataset.record}); return; }
+    if(action==='read'&&!id) { collect(page); ui.query=ui.draft; ui.scrollTop=window.scrollY; ui.focus=control.dataset.record; navigate(VIEW.EXTERNAL,{recordId:control.dataset.record},{index:true}); return; }
     if(action==='open'||action==='online-open') { event.preventDefault(); const url=safeUrl(control.dataset.url); if(!url) { notify('仅允许打开安全的 HTTPS 原始网页。','warn'); return; } void openExternal(url).then(result=>{ if(result===false||result?.ok===false) throw new Error('无法打开原始网页。'); }).catch(error=>notify(msg(error),'error')); return; }
     if(action==='bing-gov') { event.preventDefault(); const query=String(page.querySelector('#externalOnlineQuery')?.value||'').trim(); if(query.length<2){notify('请至少输入 2 个字符。','warn');page.querySelector('#externalOnlineQuery')?.focus();return;} const url=`https://www.bing.com/search?q=${encodeURIComponent(`site:gov.cn ${query}`)}`; void openExternal(url); return; }
     if(action==='online-sources') { online.showSources=true; online.sources=null; renderOnline(page); void getOnlineSources().then(result=>{ if(!current(page,token,id)) return; online.sources=result; renderOnline(page); }).catch(error=>notify(msg(error),'error')); return; }

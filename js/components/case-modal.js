@@ -1,4 +1,4 @@
-import { registerNavigationContext, rememberNavigation } from '../core/navigation-history.js';
+import { registerNavigationContext, rememberNavigation, dismissNavigation } from '../core/navigation-history.js';
 /* ================================================================
  * 组件：案例详情弹窗
  * ================================================================ */
@@ -26,7 +26,7 @@ registerNavigationContext('case-modal', () => ({ project: isModalOpen() ? opened
 export function openModal(project) {
   if (!project) return;
 
-  rememberNavigation();
+  rememberNavigation({ scope: "case-modal" });
   openedProject = project;
   lastFocused = document.activeElement;
 
@@ -144,6 +144,7 @@ export function openModal(project) {
 
 /** 关闭弹窗 */
 export function closeModal() {
+  dismissNavigation("case-modal");
   const modal = $('caseModal');
   if (!modal) return;
   modal.classList.remove('open');
@@ -189,7 +190,7 @@ export function initModal() {
       const id = policyBtn.dataset.caseId;
       if (!id) return;
       closeModal();
-      goCasePolicy(id);
+      goCasePolicy(id, { index: true });
     });
   }
 
@@ -200,7 +201,7 @@ export function initModal() {
       const id = sourcesBtn.dataset.caseId;
       if (!id) return;
       closeModal();
-      goCaseSources(id);
+      goCaseSources(id, { index: true });
     });
   }
 
