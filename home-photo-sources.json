@@ -1,0 +1,50 @@
+[
+  {
+    "id": "06",
+    "file": "case-ningbo-fields.jpg",
+    "scene": "ningbo",
+    "place": "浙江宁波 · 南洪村",
+    "location": "浙江省宁波市 · 镇海区南洪村",
+    "title": "千亩连片耕地",
+    "caption": "宁波市镇海区南洪村千亩连片耕地。浙江省自然资源厅供图。",
+    "alt": "宁波南洪村集中连片的耕地，金色花田与道路、水系相邻",
+    "desc": "从连片耕地与田间路网，观察农业生产空间的统筹安排。",
+    "aid": "5327414",
+    "position": "50% center",
+    "localOrigin": "src/renderer/assets/covers/06.jpg",
+    "sha256": "393e23b797a3f886df584d0a711fc84fc8160ecbf35fbacb121e90f969997563",
+    "article": "https://www.iziran.net/news.html?aid=5327414"
+  },
+  {
+    "id": "07",
+    "file": "case-xincheng-village.jpg",
+    "scene": "xincheng",
+    "place": "浙江嘉兴 · 新塍镇",
+    "location": "浙江省嘉兴市 · 新塍镇潘家浜村",
+    "title": "潘家浜村美丽乡村",
+    "caption": "潘家浜村美丽乡村。",
+    "alt": "新塍镇潘家浜村水岸、民居与绿地，河面映出村庄和夕照",
+    "desc": "从水岸、村落与公共空间，认识乡村人居环境与生态空间。",
+    "aid": "5330305",
+    "position": "50% center",
+    "localOrigin": "src/renderer/assets/covers/07.jpg",
+    "sha256": "cde77d86df367a4ed232eb8045d2b8d9c6b1c476c35a18aa276bf6148929ec4d",
+    "article": "https://www.iziran.net/news.html?aid=5330305"
+  },
+  {
+    "id": "30",
+    "file": "case-suide-terraces.jpg",
+    "scene": "suide",
+    "place": "陕西绥德 · 满堂川镇",
+    "location": "陕西省榆林市 · 绥德县满堂川镇",
+    "title": "整理后的农用地",
+    "caption": "整理后的农用地。",
+    "alt": "绥德满堂川镇黄土丘陵间整理后的梯田，田坎沿地形层层展开",
+    "desc": "从顺应黄土地形的梯田，观察农用地整理的地域差异。",
+    "aid": "5345879",
+    "position": "50% center",
+    "localOrigin": "src/renderer/assets/covers/30.jpg",
+    "sha256": "6736672fd7563aca4834f49f2505ca3ccfda0b4c19e6980d429495a4d962d60f",
+    "article": "https://www.iziran.net/news.html?aid=5345879"
+  }
+]
