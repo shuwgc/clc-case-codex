@@ -1,4 +1,4 @@
-import { rememberNavigation } from '../core/navigation-history.js';
+import { clearNavigationHistory } from '../core/navigation-history.js';
 /* ================================================================
  * 组件：搜索交互、导出、重置、回到顶部、提示条
  * ================================================================ */
@@ -169,7 +169,7 @@ export function initToTop() {
   }, { passive: true });
 
   toTop.addEventListener('click', () => {
-    rememberNavigation();
+    clearNavigationHistory();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   });
 }
