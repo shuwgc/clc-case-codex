@@ -103,7 +103,6 @@ export function initNavigationHistory(config) {
       clearNavigationHistory();
       return;
     }
-    const anchor = event.target.closest('a[href^="#"]');
-    if (anchor && anchor.getAttribute('href').length > 1 && !anchor.closest('.site-header, .site-footer, [data-goto-view]')) rememberNavigation();
+    // A hash alone does not make a link an index. Only explicit locators record it.
   }, true);
 }
