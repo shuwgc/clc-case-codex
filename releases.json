@@ -424,13 +424,13 @@
     {
       "id": "v067",
       "version": "0.6.7",
-      "label": "导航修订版（同号0.6.7）",
-      "bytes": 89744753,
-      "sha256": "d97c1d54317f433dd082da8905c794c290ce40a085c68ce0260bf7eb62fae9de",
-      "summary": "35项细则释义、定位高亮；仅索引跳转保留返回，主动去首页、切换栏目或案例即隐藏箭头。原始同号构建保留于发布附件。",
+      "label": "色块定位修订 1022-B（同号0.6.7）",
+      "bytes": 89745302,
+      "sha256": "959e63ba376351bc80e3924f27ae10262ed905e74a35d6e2882d727a84395d35",
+      "summary": "色块立即定位所属案例及细则；修复回到顶部重新生成返回链。主动去首页或换栏目隐藏箭头，页脚标识1022-B。前两份同号构建保留发布附件。",
       "date": "2026-10-22",
       "legacy": false,
-      "downloadUrl": "https://github.com/shuwgc/clc-case-codex/releases/download/v0.6.7/CLC-v067-navigation-fix-x64.exe",
+      "downloadUrl": "https://github.com/shuwgc/clc-case-codex/releases/download/v0.6.7/CLC-v067-heat-navigation-x64.exe",
       "publicationStatus": "published",
       "screenshots": [
         {
@@ -444,7 +444,15 @@
         "bytes": 89744721,
         "sha256": "05fabcb10bb500df72833915ed8b5d27ae2d9664e61e73d232d1fb2e053e45b0",
         "downloadUrl": "https://github.com/shuwgc/clc-case-codex/releases/download/v0.6.7/CLC-v067-x64.exe"
-      }
+      },
+      "supersededBuilds": [
+        {
+          "label": "前次导航修订（仍遗漏回到顶部及矩阵格定位，保留归档）",
+          "sha256": "d97c1d54317f433dd082da8905c794c290ce40a085c68ce0260bf7eb62fae9de",
+          "bytes": 89744753,
+          "downloadUrl": "https://github.com/shuwgc/clc-case-codex/releases/download/v0.6.7/CLC-v067-navigation-fix-x64.exe"
+        }
+      ]
     }
   ],
   "missingInstallers": [

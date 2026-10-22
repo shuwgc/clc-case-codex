@@ -1,4 +1,4 @@
-import { rememberNavigation } from './navigation-history.js';
+import { rememberNavigation, clearNavigationHistory } from './navigation-history.js';
 /* ================================================================
  * 视图工具：DOM 引用与安全转义
  * ================================================================ */
@@ -50,9 +50,10 @@ export function onActivate(el, handler) {
 }
 
 /** 平滑滚动到指定元素（避开固定顶栏） */
-export function scrollToEl(el, offset = 64, record = true) {
+export function scrollToEl(el, offset = 64, record = false) {
   if (!el) return;
   if (record) rememberNavigation();
+  else clearNavigationHistory();
   const y = el.getBoundingClientRect().top + window.scrollY - offset;
   window.scrollTo({ top: Math.max(0, y), behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' });
 }

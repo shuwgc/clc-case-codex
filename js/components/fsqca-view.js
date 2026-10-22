@@ -108,8 +108,8 @@ function ruleDetail(caseData) {
     `<button type="button" class="fsqca-status-btn${rule.status === key ? ' active' : ''}" data-status="${esc(key)}" title="标记为${esc(key)}">${esc(s.label)}</button>`).join('');
   const level = SCALE.levels.find(l => l.value === parseScore(rule.score).value);
   const color = SCALE.status[rule.status]?.counts ? level?.color : SCALE.status[rule.status]?.color;
-  return `<section class="fsqca-detail fsqca-selected-detail" data-detail-rule="${esc(rule.code)}" style="--rule-color:${color || '#8a8f98'}" tabindex="-1">
-    <p class="fsqca-location-label">已定位 · ${esc(caseData.id)} 案 · ${esc(rule.code)}</p>
+  return `<section class="fsqca-detail fsqca-selected-detail" data-detail-case="${esc(caseData.id)}" data-detail-rule="${esc(rule.code)}" style="--rule-color:${color || '#8a8f98'}" tabindex="-1">
+    <p class="fsqca-location-label">已定位 · ${esc(caseData.id)} 案 · ${esc(caseData.name)} · ${esc(rule.code)}</p>
     <div class="fsqca-detail-head"><h3>${esc(rule.code)} · ${esc(rule.name)}</h3>${scoreBadge(rule)}</div>
     <div class="fsqca-rule-definition"><h4>这条细则是什么意思</h4><p>${esc(RULE_DEFINITIONS[rule.code] || '暂无通用释义')}</p><small>通用释义用于理解细则；本案例的评分理由与证据见下方。</small></div>
     <p class="fsqca-detail-basis"><strong>评分依据（观测要点）：</strong>${esc(rule.basis || '（未填写）')}</p>
@@ -143,7 +143,8 @@ function heatSection() {
     const cells = m.cells[ri] || [];
     return `<tr><th title="${esc(c.name)}">${esc(c.id)}</th>${cells.map((cell, ci) => {
       const ovSuffix = cell?.overridden ? '（已修订）' : '';
-      return `<td data-c="${ci}" data-heat-case="${esc(c.id)}" data-heat-rule="${esc(m.rules[ci])}" class="${cell?.overridden ? 'qca-heat-ov ' : ''}${c.id === ui.caseId && m.rules[ci] === ui.selectedRule ? 'cell-active' : ''}" style="background:${colorFor(cell)}" title="${esc(cell?.code || '')} ${esc(String(cell?.score ?? ''))} ${esc(cell?.status ?? '')}${ovSuffix}"></td>`;
+      const label = `${c.id} · ${c.name} · ${m.rules[ci]} · ${cell?.score ?? '—'} · ${cell?.status ?? ''}${ovSuffix}；定位案例与细则`;
+      return `<td data-c="${ci}" data-heat-case="${esc(c.id)}" data-heat-rule="${esc(m.rules[ci])}" class="${cell?.overridden ? 'qca-heat-ov ' : ''}${c.id === ui.caseId && m.rules[ci] === ui.selectedRule ? 'cell-active' : ''}" style="background:${colorFor(cell)}"><button type="button" class="fsqca-heat-cell" aria-label="${esc(label)}" aria-pressed="${c.id === ui.caseId && m.rules[ci] === ui.selectedRule}" title="${esc(label)}"></button></td>`;
     }).join('')}</tr>`;
   }).join('');
   const head = `<tr><th>案例</th>${m.rules.map((r, ci) => `<th data-c="${ci}" data-code="${esc(r)}" title="${esc(r)}">${esc(r)}</th>`).join('')}</tr>`;
@@ -155,7 +156,7 @@ function heatSection() {
     <span class="fsqca-lg"><i style="background:${HEAT_MISSING_COLOR}"></i>缺失</span>
     <span class="fsqca-lg"><i style="background:${HEAT_NA_COLOR}"></i>不适用/情境</span>
   </div>`;
-  return `<section class="fsqca-heat"><h3>全库热力矩阵（47 案 × 35 细则）</h3><p class="fsqca-hint">色阶表示五档得分，深灰表示缺失，暗黄表示不适用或情境变量，绿色虚线框表示本地已调整。点击表头查看该细则的全库覆盖情况，点击单元格可钉选。</p>${legend}<div class="fsqca-heat-scroll"><table class="fsqca-heat-table">${head}${rows}</table></div></section>`;
+  return `<section class="fsqca-heat"><h3>全库热力矩阵（47 案 × 35 细则）</h3><p class="fsqca-hint">色阶表示五档得分，深灰表示缺失，暗黄表示不适用或情境变量，绿色虚线框表示本地已调整。点击色块立即定位所属案例与细则详情；点击表头查看该细则的全库覆盖情况。</p>${legend}<div class="fsqca-heat-scroll"><table class="fsqca-heat-table">${head}${rows}</table></div></section>`;
 }
 
 function shell() {
@@ -285,11 +286,15 @@ function bind(page) {
   });
   delegate(page, '.fsqca-heat-table', 'mouseleave', (_e, table) => clearColHighlight(table));
   delegate(page, '.fsqca-heat-table td', 'click', (_e, td) => {
-    const table = td.closest('table');
-    if (!table) return;
-    const wasActive = td.classList.contains('cell-active');
-    table.querySelectorAll('.cell-active').forEach(el => el.classList.remove('cell-active'));
-    if (!wasActive) td.classList.add('cell-active');
+    const caseData = getCase(td.dataset.heatCase);
+    const code = td.dataset.heatRule;
+    if (!caseData?.rules.some(rule => rule.code === code)) return;
+    rememberNavigation();
+    ui.caseId = caseData.id;
+    ui.selectedRule = code;
+    page.querySelector('#fsqcaCaseSelect').value = ui.caseId;
+    renderBody(page);
+    locateSelectedRule(page);
   });
 
   /* B1-2：点击表头细则 → toast 显示该细则全库覆盖（有效/缺失/不适用）。

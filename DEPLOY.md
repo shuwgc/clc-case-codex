@@ -58,4 +58,7 @@ Website Auditor返回PRO_REQUIRED，未得到本站审计评分。现有验证�
 Web版同步35项细则释义、定位高亮与统一返回；保留原有浏览器检索降级。当前截图于2026-10-21至22日从0.6.7真实渲染，公开元数据在assets/current-captures-067.json。安装包公开后验证文件大小与SHA-256，再启用releases.json下载链接。
 
 
-0.6.7导航修订：返回入口仅用于索引定位；主动选择首页、栏目、案例或标签后清空。当前下载使用CLC-v067-navigation-fix-x64.exe，原同号构建保留于Release附件；校验值与具体记录见releases.json。
+0.6.7导航修订：返回入口仅用于索引定位；主动选择首页、栏目、案例或标签后清空。当前下载使用CLC-v067-heat-navigation-x64.exe，原同号构建保留于Release附件；校验值与具体记录见releases.json。
+
+
+0.6.7 色块定位修订 1022-B：矩阵色块立即定位案例和细则；修复返回顶部生成多余返回链。当前下载为CLC-v067-heat-navigation-x64.exe，前两份0.6.7构建保留附件；页脚可识别本次修订。
