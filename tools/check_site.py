@@ -74,11 +74,16 @@ def check_site(root, require_downloads=False, remote=False):
             text = path.read_text(encoding='utf-8')
             check(not re.search(r'[A-Za-z]:[\\/]Users[\\/]|127\.0\.0\.1|localhost:|sourcePackage|sourceAsar', text), 'no local paths: ' + path.relative_to(root).as_posix())
     data = json.loads((root / 'releases.json').read_text(encoding='utf-8'))
-    check(len(data['installers']) == 20, '20 archived packages represented')
+    check(len(data['installers']) >= 21, 'existing archives and formal release represented')
+    check(len({release['id'] for release in data['installers']}) == len(data['installers']), 'release IDs unique')
+    current = [release for release in data['installers'] if release['id'] == 'v100-release']
+    check(len(current) == 1 and current[0]['version'] == '1.0.0' and not current[0]['legacy'], 'one formal 1.0.0 release')
+    check(any(release['version'] == '1.0.0' and release['legacy'] for release in data['installers']), 'early same-number archive retained')
     shots = set()
     pending = []
     for release in data['installers']:
-        check(bool(re.fullmatch(r'[0-9a-f]{64}', release['sha256'])), release['id'] + ' checksum supplied')
+        check(bool(re.fullmatch(r'[0-9a-f]{64}', release['sha256'])) or (not require_downloads and release.get('publicationStatus') == 'pending'), release['id'] + ' checksum supplied or unpublished')
+        check(release.get('publicationStatus') == 'pending' or release['bytes'] > 0, release['id'] + ' published installer has positive size')
         for shot in release['screenshots']:
             check(set(shot) <= {'src','caption','provenance'}, 'public screenshot fields only')
             check((root / shot['src']).is_file(), 'historical screenshot: ' + shot['src'])
@@ -95,7 +100,13 @@ def check_site(root, require_downloads=False, remote=False):
                     check(response.status == 200 and int(response.headers.get('Content-Length','0')) == release['bytes'], 'public download status and length: ' + release['id'])
             except Exception as error:
                 check(False, 'public download failed: ' + release['id'] + ' / ' + type(error).__name__)
-    check(len(shots) == 32, '32 distinct release screenshots')
+    check(len(shots) >= 32, 'existing release screenshots retained')
+    for release in data['installers']:
+        for build in [release.get('previousBuild'), *release.get('supersededBuilds', [])]:
+            if not build:
+                continue
+            check(bool(re.fullmatch(r'[0-9a-f]{64}', build.get('sha256', ''))), release['id'] + ' same-number archive checksum supplied')
+            check(build.get('bytes', 0) > 0 and bool(build.get('downloadUrl')), release['id'] + ' same-number archive download retained')
     if require_downloads:
         check(not pending, 'all release packages uploaded before publication')
     return {'checks': len(checks), 'errors': errors, 'pendingInstallers': pending, 'publicationReady': not pending and not errors, 'details': checks}
