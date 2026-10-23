@@ -1068,6 +1068,70 @@ table.doc-table tbody tr.is-revoked:hover { background: #FDF3F3; }
 .mech-row.active { background: var(--green-100); }
 .mech-row.active .mech-fill { background: linear-gradient(90deg, var(--gold-500), var(--gold-600)); }
 
+/* 政策总览：七类机制以创新点为主入口，数字与说明保持对应。 */
+#pagePolicy .mech-row {
+  width: 100%;
+  grid-template-columns: minmax(260px, 1.1fr) minmax(60px, 1fr) 180px;
+  gap: 16px;
+  padding: 10px 12px;
+  margin: 0;
+  border: 1px solid transparent;
+  background: transparent;
+  text-align: left;
+  color: inherit;
+  font-family: inherit;
+}
+#pagePolicy .mech-row:hover { background: var(--green-50); }
+#pagePolicy .mech-row.active { background: var(--green-50); border-color: var(--green-200); }
+#pagePolicy .mech-name .tx { overflow: visible; text-overflow: clip; }
+#pagePolicy .mech-val { display: flex; align-items: center; justify-content: flex-end; gap: 4px; white-space: nowrap; }
+#pagePolicy .mech-val strong { color: var(--gold-600); }
+#pagePolicy .mech-val svg { margin-left: 6px; }
+#pagePolicy .mech-fill { display: block; }
+#pagePolicy .mech-row:focus-visible,
+.ov-innovation-case:focus-visible,
+.ov-case-index > summary:focus-visible,
+.ov-innovation-detail > summary:focus-visible { outline: 3px solid var(--green-600); outline-offset: 3px; }
+.policy-count-note { margin-top: -12px; }
+.ov-innovation-section { scroll-margin-top: calc(var(--header-h) + 20px); }
+#ovDrillTitle { scroll-margin-top: calc(var(--header-h) + 24px); }
+.ov-innovation-help { color: var(--ink-3); font-size: .86rem; line-height: 1.85; margin: -2px 0 18px; }
+.ov-innovation-list { display: flex; flex-direction: column; gap: 14px; }
+.ov-innovation { border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 20px 22px; background: var(--white); }
+.ov-innovation-meta { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 6px 18px; margin-bottom: 10px; }
+.ov-innovation-meta > span { color: var(--ink-3); font-size: .76rem; }
+.ov-innovation-case { display: inline-flex; align-items: center; gap: 6px; border: 0; background: none; padding: 2px 0; color: var(--green-700); font: inherit; font-size: .82rem; font-weight: 700; text-align: left; }
+.ov-innovation-case svg { flex: none; }
+.ov-innovation-case:hover { text-decoration: underline; text-underline-offset: 3px; }
+.ov-innovation h3 { font-size: 1rem; line-height: 1.7; color: var(--ink); margin-bottom: 10px; overflow-wrap: anywhere; }
+.ov-innovation-point { font-size: .9rem; line-height: 1.9; color: var(--ink-2); }
+.ov-innovation-point > span { display: inline-block; margin-right: 10px; color: var(--gold-600); font-size: .78rem; font-weight: 800; }
+.ov-innovation-detail { border-top: 1px dashed var(--line); margin-top: 14px; padding-top: 12px; }
+.ov-innovation-detail > summary { display: flex; align-items: center; justify-content: space-between; gap: 12px; cursor: pointer; color: var(--green-700); font-size: .82rem; font-weight: 700; list-style: none; }
+.ov-innovation-detail > summary::-webkit-details-marker { display: none; }
+.ov-innovation-detail[open] > summary svg { transform: rotate(180deg); }
+.ov-innovation-content { padding-top: 14px; font-size: .86rem; line-height: 1.9; color: var(--ink-2); }
+.ov-innovation-content h4 { font-size: .84rem; margin: 12px 0 5px; color: var(--ink); }
+.ov-innovation-content h4:first-child { margin-top: 0; }
+.ov-innovation-content ul { padding-left: 1.3em; list-style: disc; }
+.ov-innovation-content .ov-card-go { border: 0; background: none; padding: 10px 0 0; font-family: inherit; text-align: left; }
+.ov-innovation-lead { color: var(--ink-3); margin-top: 8px; }
+.ov-case-index { border-top: 1px solid var(--line); padding-top: 22px; }
+.ov-case-index > summary { cursor: pointer; font-size: 1rem; font-weight: 700; color: var(--green-700); line-height: 1.7; }
+.ov-case-index > summary > span { display: inline-block; margin-left: 14px; font-size: .8rem; font-weight: 400; color: var(--ink-3); }
+.ov-case-index > .pg-section { margin-top: 24px; }
+@media (max-width: 900px) {
+  #pagePolicy .mech-row { grid-template-columns: minmax(250px, 1.3fr) minmax(20px, 1fr) 168px; gap: 10px; padding: 10px 6px; }
+}
+@media (max-width: 680px) {
+  #pagePolicy .mech-row { grid-template-columns: minmax(0, 1fr) 152px; gap: 8px; }
+  #pagePolicy .mech-name .tx { white-space: normal; }
+  #pagePolicy .mech-track { grid-column: 1 / -1; order: 3; }
+  #pagePolicy .mech-val { font-size: .76rem; gap: 3px; }
+  .ov-innovation { padding: 16px; }
+  .ov-case-index > summary > span { display: block; margin-left: 0; }
+}
+
 /* ---------- 跨案例工具透视 ---------- */
 .drill-tools {
   display: flex;
@@ -1606,3 +1670,5 @@ table.doc-table tbody tr.is-revoked:hover { background: #FDF3F3; }
   .tb-caret { order: 4; }
   .tb-body { padding-left: 13px; padding-right: 13px; }
 }
+
+.cover-credit{font-size:12px;line-height:1.65;overflow-wrap:anywhere;margin-top:16px;color:inherit;opacity:.88}.cover-credit a{text-decoration:underline;text-underline-offset:3px}.pg-hero .cover-credit{color:#fff;max-width:80em}.modal-meta .cover-credit{flex-basis:100%;margin-top:4px}

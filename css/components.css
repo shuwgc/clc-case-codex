@@ -694,3 +694,5 @@
 .navigation-back:disabled { opacity: .6; cursor: wait; }
 .navigation-target { outline: 3px solid #f1cf76 !important; outline-offset: 3px; scroll-margin-block: 90px; }
 @media (max-width: 600px) { .navigation-back { top: auto; bottom: 18px; inset-inline-start: 8px; } }
+
+.cover-dated-note{position:absolute;bottom:6px;right:10px;z-index:3;color:#fff;background:rgba(0,0,0,.65);padding:2px 5px;border-radius:3px;font-size:10px}.modal-cover--photo{background-position:center top}
