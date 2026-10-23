@@ -2,6 +2,20 @@
 (() => {
   const hero = document.querySelector('.intro-hero');
   if (!hero) return;
+  // Keep an initial team deep link aligned as the release list and fonts settle.
+  if (location.hash === '#about' && document.getElementById('about')) {
+    let untouched = true;
+    const stopAligning = () => { untouched = false; };
+    ['pointerdown', 'wheel', 'touchstart', 'keydown'].forEach(type =>
+      addEventListener(type, stopAligning, {once: true, passive: true}));
+    const alignTeam = () => {
+      if (untouched && location.hash === '#about') requestAnimationFrame(() =>
+        document.getElementById('about').scrollIntoView({block: 'start', behavior: 'instant'}));
+    };
+    document.addEventListener('clc-release-ready', alignTeam, {once: true});
+    addEventListener('load', alignTeam, {once: true});
+    document.fonts.ready.then(alignTeam);
+  }
   const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
   const gallery = hero.querySelector('.hero-gallery');
   const photo = gallery.querySelector('.hero-photo');
