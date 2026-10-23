@@ -98,7 +98,7 @@
       selectScene(key === 'Home' ? 0 : key === 'End' ? scenes.length - 1 : requested + (key === 'ArrowRight' ? 1 : -1), key === 'ArrowLeft' ? -1 : 1);
     });
   }
-  const revealTargets = [...document.querySelectorAll('.hero-panel > *, .hero-gallery, .definition-grid > div, .task-list > li, .case-essay-head, .case-figure, .research-lead > *, .research-questions > li, .framework-strip, .path-heading, .path-step, .section-heading > *, .showcase-layout, .showcase-tail, .paper-layout > *, .download-layout > *, .recent-archive-head')];
+  const revealTargets = [...document.querySelectorAll('.hero-panel > *, .hero-gallery, .definition-grid > div, .task-list > li, .case-essay-head, .case-figure, .research-lead > *, .research-questions > li, .framework-strip, .path-heading, .path-step, .section-heading > *, .showcase-layout, .showcase-tail, .paper-layout > *, .download-layout > *, .recent-archive-head, .team-intro, .team-work-title, .team-member, .team-shared')];
   let observer;
   const showAll = () => {
     observer?.disconnect();
