@@ -1,5 +1,6 @@
 /* Homepage team section; typography and palette follow the existing site. */
 .team-stage { background: var(--ivory); }
+.team-stage::before { background-image: url('team-landscape.svg'); background-size: cover; background-position: center; opacity: 1; }
 .team-layout { display: grid; grid-template-columns: minmax(0, .85fr) minmax(0, 1.25fr); gap: clamp(48px, 7vw, 112px); }
 .team-intro h2 { margin-top: 26px; font-size: var(--title); }
 .team-affiliation { margin-top: 24px; font-family: var(--serif); font-size: 22px; line-height: 1.8; color: var(--forest); }
@@ -27,6 +28,7 @@
   .team-advisor { margin-top: 28px; padding-top: 5px; }
 }
 @media (max-width: 600px) {
+  .team-stage::before { background-image: url('team-landscape.svg'), url('team-landscape.svg'); background-size: 760px auto, 1080px auto; background-position: right top, left bottom; background-repeat: no-repeat; opacity: .65; }
   .team-intro h2 { margin-top: 23px; }
   .team-affiliation { font-size: 20px; margin-top: 20px; }
   .team-summary { font-size: 14px; margin-top: 16px; }

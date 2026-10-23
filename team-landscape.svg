@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" fill="none">
+  <defs>
+    <pattern id="furrows" width="14" height="14" patternUnits="userSpaceOnUse" patternTransform="rotate(-22)">
+      <path d="M0 0V14" stroke="#78947a" stroke-width=".7" opacity=".2"/>
+    </pattern>
+    <linearGradient id="fieldWash" x1="1600" y1="0" x2="860" y2="700" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#aec2a1" stop-opacity=".28"/><stop offset="1" stop-color="#b8c9a8" stop-opacity=".025"/>
+    </linearGradient>
+    <linearGradient id="riverWash" x1="0" y1="1000" x2="700" y2="650" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#91ae95" stop-opacity=".26"/><stop offset="1" stop-color="#91ae95" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="edgeInk" x1="1600" y1="0" x2="820" y2="600" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#63856d" stop-opacity=".44"/><stop offset="1" stop-color="#63856d" stop-opacity=".04"/>
+    </linearGradient>
+  </defs>
+  <!-- Abstract cadastral drawing: field parcels follow a branching watercourse. -->
+  <g stroke="url(#edgeInk)" stroke-width="1.2" stroke-linejoin="round">
+    <path d="M1075-40 1235 12 1190 136 1030 86Z" fill="url(#fieldWash)"/>
+    <path d="M1249 17 1415 73 1370 197 1205 141Z" fill="#adc3a1" fill-opacity=".12"/>
+    <path d="M1430 78 1615 140 1570 263 1385 202Z" fill="url(#fieldWash)"/>
+    <path d="M1025 101 1185 153 1139 282 978 228Z" fill="#bacbac" fill-opacity=".1"/>
+    <path d="M1200 158 1365 214 1318 343 1154 287Z" fill="url(#fieldWash)"/>
+    <path d="M1380 219 1565 280 1518 409 1333 348Z" fill="#a5bea0" fill-opacity=".13"/>
+    <path d="M1550-40 1660-3 1615 124 1445 67 1480-30" fill="url(#fieldWash)"/>
+    <path d="M973 245 1133 299 1088 424 928 370Z" fill="url(#fieldWash)"/>
+    <path d="M1148 304 1312 360 1267 485 1103 429Z" fill="#b7c9a8" fill-opacity=".09"/>
+    <path d="M1327 365 1512 426 1467 551 1282 490Z" fill="url(#fieldWash)"/>
+    <path d="M1030 86 1190 136 1139 282 978 228Z" fill="url(#furrows)"/>
+    <path d="M1380 219 1565 280 1518 409 1333 348Z" fill="url(#furrows)"/>
+    <path d="M973 245 1133 299 1088 424 928 370Z" fill="url(#furrows)"/>
+  </g>
+  <!-- The open double line reads as a water corridor, not a geometric tile. -->
+  <g stroke="#72937e" stroke-linecap="round">
+    <path d="M1620 600C1470 583 1404 534 1332 578S1277 724 1168 748 1005 704 925 788" stroke-width="15" opacity=".055"/>
+    <path d="M1620 592C1470 575 1404 526 1328 570S1270 716 1166 740 1001 696 919 781" stroke-width="1.2" opacity=".19"/>
+    <path d="M1620 609C1470 592 1408 543 1338 586S1285 733 1170 757 1009 713 931 797" stroke-width="1" opacity=".13"/>
+    <path d="M1340 576C1320 486 1373 441 1430 396" stroke-width="1" opacity=".14"/>
+  </g>
+  <path d="M-70 821C120 732 169 928 351 867S545 785 738 914L760 1040H-70Z" fill="url(#riverWash)"/>
+  <g stroke="#77957c" stroke-width="1" opacity=".19">
+    <path d="M-70 794C120 705 169 901 351 840S545 758 738 887"/>
+    <path d="M-70 814C120 725 169 921 351 860S545 778 738 907"/>
+    <path d="M-70 837C120 748 169 944 351 883S545 801 738 930"/>
+    <path d="M-70 863C120 774 169 970 351 909S545 827 738 956"/>
+    <path d="M-70 892C120 803 169 999 351 938S545 856 738 985"/>
+    <path d="M-70 924C120 835 169 1031 351 970S545 888 738 1017"/>
+    <path d="M-70 959C120 870 169 1066 351 1005S545 923 738 1052"/>
+  </g>
+  <g stroke="#a2874e" stroke-width="1" opacity=".2">
+    <path d="M1425-30 1263 447M1007 92 1640 305"/>
+    <circle cx="1381" cy="99" r="4" fill="#f6f3e9"/>
+    <circle cx="1332" cy="242" r="4" fill="#f6f3e9"/>
+    <circle cx="1283" cy="387" r="4" fill="#f6f3e9"/>
+  </g>
+</svg>
