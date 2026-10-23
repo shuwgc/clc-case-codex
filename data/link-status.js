@@ -10,6 +10,7 @@ export const LINK_REPAIRS = {
   "https://ghzy.hangzhou.gov.cn/col/col1229560919/art/2025/art_e46ed650126648ff8ee0ee12559041cb.html": "https://zfgb.hangzhou.gov.cn/upload/default/bigfile/2025/11/03/20251103_be1299d8e44abc8d58f8f9ac77f48dff.pdf"
 };
 export const LINK_UNAVAILABLE = {
+  "https://www.jjcbw.com/v2/news/article/322633.html": 404,
   "http://zrzyj.yingtan.gov.cn/art/2022/10/5/art_857_1217679.html": 404,
   "https://ghzyj.gz.gov.cn/xwzx/gzdt/content/post_9885563.html": 404,
   "https://www.putian.gov.cn/zwgk/ghxx/qygh/202505/t20250509_1994316.htm": 404,
