@@ -4,7 +4,7 @@
 
 import { $, esc, delegate } from '../core/dom.js';
 import { coverStyle, abbrOf, isInvestKnown } from '../core/domain.js';
-import { coverOf } from '../../data/covers.js';
+import { COVER_CREDITS, coverOf } from '../../data/covers.js';
 import { pagedResults } from '../core/filters.js';
 import { showMore, resetFilters } from '../core/state.js';
 import { updateResultMeta } from './stats.js';
@@ -35,7 +35,7 @@ function cardHTML(p) {
     <div class="${coverClass}"${coverAttr}>
       <span class="cover-char">${esc(abbrOf(p.province))}</span>
       <span class="batch-badge batch-${esc(p.batch)}">${esc(p.batch)}</span>
-      <span class="cover-prov">${esc(p.province)}</span>
+      <span class="cover-prov">${esc(p.province)}</span>${COVER_CREDITS[String(p.id).padStart(2,'0')]?.note?.startsWith('2020') ? '<small class="cover-dated-note">2020年地域景观 · 非试点成效</small>' : ''}
     </div>
     <div class="card-body">
       <h3 class="card-name">${esc(p.name)}</h3>

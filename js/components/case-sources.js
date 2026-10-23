@@ -1,3 +1,4 @@
+import { coverCreditHtml } from './cover-credit.js';
 import { jumpToTarget, isRestoringNavigation } from '../core/navigation-history.js';
 import { registerNavigationContext, rememberNavigation, dismissNavigation } from '../core/navigation-history.js';
 /* ================================================================
@@ -122,7 +123,7 @@ function renderHero(d, project, policy) {
         <div class="pg-metric"><b>${d.counts.excerpts}</b><span>全文摘录</span></div>
         <div class="pg-metric"><b>${d.sections.length}</b><span>来源分类</span></div>
       </div>
-      <div class="pg-hero-strip">${caseStripHtml(d.id)}</div>
+      <div class="pg-hero-strip">${caseStripHtml(d.id)}</div>${coverCreditHtml(d.id)}
     </div>
   </div>`;
 }

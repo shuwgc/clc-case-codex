@@ -179,9 +179,10 @@ function controlsHtml() {
 function necessityHtml(nec) {
   const rows = nec.rows.map(r => `<tr${r.necessary ? ' class="qca-necessary"' : ''}>
     <td>${esc(r.condition)}</td><td${qcaClass(r.consistency)}>${fmt(r.consistency)}</td><td${qcaClass(r.coverage)}>${fmt(r.coverage)}</td>
-    <td>${r.partial ? '有缺失' : r.necessary ? `≥${nec.benchmark} 必要条件` : ''}</td></tr>`).join('');
+    <td>${fmt(r.ron)}</td><td>${r.partial ? '有缺失' : r.necessary ? `达到一致性基准；需结合 RoN 判断` : '未达到一致性基准'}</td></tr>`).join('');
   return `<section class="qca-block"><h3>必要条件分析（Analysis of Necessary Conditions，consistency 基准 ≥${nec.benchmark}）</h3>
-    <table class="qca-table"><thead><tr><th>条件</th><th>Consistency</th><th>Coverage</th><th>判定</th></tr></thead><tbody>${rows}</tbody></table></section>`;
+    <p class="qca-note">必要性一致性＝Σmin(X,Y)/ΣY；覆盖度＝Σmin(X,Y)/ΣX；RoN＝Σ(1−X)/Σ(1−min(X,Y))。分母为零时不计算；高一致性仍需结合相关性和案例证据判断。</p>
+    <table class="qca-table"><thead><tr><th>条件</th><th>必要性一致性</th><th>必要性覆盖度</th><th>RoN</th><th>筛查</th></tr></thead><tbody>${rows}</tbody></table></section>`;
 }
 
 function truthTableHtml(tt) {
@@ -294,9 +295,9 @@ function buildExportCsv() {
   const pushSide = (label, s) => {
     lines.push([label]);
     lines.push(['必要条件分析', `consistency 基准 ≥${s.necessity.benchmark}`]);
-    lines.push(['条件', 'Consistency', 'Coverage', '判定']);
+    lines.push(['条件', '必要性一致性 inclN', '必要性覆盖度 covN', 'RoN', '筛查']);
     for (const n of s.necessity.rows) {
-      lines.push([n.condition, csvNum(n.consistency), csvNum(n.coverage), n.partial ? '有缺失' : n.necessary ? '必要条件' : '']);
+      lines.push([n.condition, csvNum(n.consistency), csvNum(n.coverage), csvNum(n.ron), n.partial ? '有缺失' : n.necessary ? '达到一致性基准；需结合RoN判断' : '未达到一致性基准']);
     }
     lines.push([]);
     lines.push(['真值表', `频数≥${s.truthTable.freqCutoff}`, `一致性≥${s.truthTable.consistCutoff}${s.truthTable.priCutoff ? `，PRI≥${s.truthTable.priCutoff}` : ''}`]);
