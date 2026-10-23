@@ -23,12 +23,16 @@ const FAMILY_LABELS = {
   F8: '土地要素与治理机制',
 };
 const familyLabel = value => FAMILY_LABELS[value] || value;
+const sourceLabel = (meta, id) => {
+  const source = meta.sourceCatalog?.find(item => item.siteId === id);
+  return source ? `${source.siteName}（${source.hostname}）` : id;
+};
 const msg = error => ({
   'Query must not exceed 160 characters.':'检索词不能超过160个字符。','Normalized query must not exceed 160 characters.':'规范化检索词不能超过160个字符。','Query must not exceed 12 terms.':'检索词不能超过12项。','Unclosed query quote.':'检索词引号未闭合。','Quoted terms must not be empty.':'引号短语不能为空。','Separate quoted terms with whitespace.':'引号短语之间需要空格。','Start quoted terms at a word boundary.':'请在词边界开始引号短语。'
 }[error?.message] || String(error?.message || error || '未知错误'));
 const marked = (text, terms = []) => highlightText(String(text ?? ''), terms).replaceAll('<mark>', '<mark class="external-mark">');
 const current = (page, token, id) => token === epoch && $('pageExternal') === page && getState().view === VIEW.EXTERNAL && String(getState().viewParams?.recordId ?? '') === id;
-const safeUrl = value => { try { const url = new URL(String(value || '')); return url.protocol === 'https:' ? url.href : ''; } catch { return ''; } };
+const safeUrl = value => { try { const url = new URL(String(value || '')); return url.protocol === 'https:' || (url.protocol === 'http:' && url.hostname === 'dnr.shandong.gov.cn') ? url.href : ''; } catch { return ''; } };
 
 /* 结果区等待时的骨架屏（0.6.3 P2-3）：3 条灰绿 shimmer 卡片，替换干巴巴的一行文字。
    shimmer 动画在 base.css 的 prefers-reduced-motion 媒体查询里会被统一关掉。 */
@@ -65,40 +69,40 @@ const relationSelect = (facets, meta) => {
 };
 
 function shell(meta, facets) {
-  return `<div class="external-shell"><header class="external-hero"><p class="external-eyebrow">维护采集 · 离线检索</p><h1>域外实践检索</h1><p class="external-intro">检索已采集的政府公开网页文本，范围覆盖<strong>新式土地管理</strong>：全域土地综合整治、耕地保护与占补平衡、高标准农田与农用地整理、建设用地整理与节约集约、宅基地与集体土地改革、国土空间规划与用途管制、生态修复与矿山治理、盐碱地治理、土地要素与治理机制。此处不是实时全网搜索；收录范围以本次资料快照和页面列明来源为准。外链需联网并由系统浏览器打开。</p>
-    <div class="external-metrics"><div><strong>${esc(meta.counts.bodyArticles)}</strong><span>含提取正文</span></div><div><strong>${esc(meta.counts.scannedRegions ?? 0)}</strong><span>已扫描地区</span></div><div><strong>${esc(meta.counts.reviewedPractices)}</strong><span>已审阅本库外实践</span></div><div><strong>${esc((meta.counts.knownCaseArticles ?? 0) + (meta.counts.mixedArticles ?? 0))}</strong><span>已判定与本库重合</span></div></div>
-    <p class="external-coverage-note">快照 ${esc(meta.promotedAt ? new Date(meta.promotedAt).toLocaleDateString('zh-CN') : '尚未完成发布')} · 本库之外，未核定全部官方批次名单；自动候选不等于已核实实践。当前为试点范围：${esc(meta.counts.scannedRegions ?? 0)} 个地区、${esc((meta.collectedScope?.sources || []).length)} 个公开来源，未配置地区不代表没有相关实践。查看<a href="#externalCoverage">采集覆盖与口径</a></p>
+  return `<div class="external-shell"><header class="external-hero"><p class="external-eyebrow">维护采集 · 离线检索</p><h1>域外实践检索</h1><p class="external-intro">检索已采集的政府公开网页文本，以全域土地综合整治为核心，向相关土地管理议题扩展：全域土地综合整治、耕地保护与占补平衡、高标准农田与农用地整理、建设用地整理与节约集约、宅基地与集体土地改革、国土空间规划与用途管制、生态修复与矿山治理、盐碱地治理、土地要素与治理机制。这九类主题用于归类域外资料：与本库案例涉及的农用地整理、建设用地整理、生态修复及治理机制等工作相衔接，不直接替代政策工具的七类机制或研究评分。此处不是实时全网搜索；收录范围以本次资料快照和页面列明来源为准。外链需联网并由系统浏览器打开。</p>
+    <div class="external-metrics"><div><strong>${esc(meta.counts.bodyArticles)}</strong><span>含提取正文</span></div><div><strong>${esc(meta.counts.scannedRegions ?? 0)}</strong><span>有收录的来源地区（含国家）</span></div><div><strong>${esc(meta.counts.reviewedPractices)}</strong><span>已审阅本库外实践</span></div><div><strong>${esc((meta.counts.knownCaseArticles ?? 0) + (meta.counts.mixedArticles ?? 0))}</strong><span>已判定与本库重合</span></div></div>
+    <p class="external-coverage-note">快照 ${esc(meta.promotedAt ? new Date(meta.promotedAt).toLocaleDateString('zh-CN') : '尚未完成发布')} · 本库之外，未核定全部官方批次名单；自动候选不等于已核实实践。累计收录 ${esc(meta.counts.articles)} 条网页记录，来自 ${esc(meta.retainedSources ?? 0)} 个网站、${esc(meta.provincialRegions ?? 0)} 个省级地区及国家级来源；其中 ${esc(meta.counts.metadataArticles)} 条仅有元数据。来源地区不等于实践地点覆盖，未收录地区不代表没有相关实践。查看<a href="#externalCoverage">采集覆盖与口径</a></p>
   </header><div class="external-workspace"><aside class="external-filters"><h2>筛选</h2><p class="external-help">筛选仅作用于域外资料，不会改变案例库与“搜全文”。</p>
-    ${select('family','主题族',facets.family, familyLabel)}
+    ${select('family','资料主题',facets.family, familyLabel)}
     ${select('province','实践地区',facets.province)}
-    ${select('host','发布网站',facets.host, id => meta.sourceCoverage.find(item => item.sources.includes(id))?.region ? `${meta.sourceCoverage.find(item => item.sources.includes(id)).region} · ${id}` : id)}
+    ${select('host','来源网站',facets.host, id => sourceLabel(meta, id))}
     ${select('articleKind','内容类型',facets.articleKind, value => labels[value] || value)}
     ${relationSelect(facets.relation, meta)}
     ${select('coverage','正文覆盖',facets.coverage, value => labels[value] || value)}
     <fieldset class="external-date"><legend>发布日期范围</legend><label class="external-field"><span>起始</span><input data-filter="from" type="date" value="${esc(ui.filters.from)}"></label><label class="external-field"><span>截止</span><input data-filter="to" type="date" value="${esc(ui.filters.to)}"></label><label class="external-check"><input data-filter="includeUndated" type="checkbox"${ui.filters.includeUndated ? ' checked' : ''}>包含日期未披露</label></fieldset>
     <label class="external-check"><input data-filter="bodyOnly" type="checkbox"${ui.filters.bodyOnly ? ' checked' : ''}>仅检索已提取正文</label>
   </aside><main class="external-main"><form class="external-search" id="externalSearchForm"><label class="external-field external-query"><span>检索词</span><input id="externalQuery" type="search" maxlength="160" autocomplete="off" value="${esc(ui.draft)}" placeholder="如：占补平衡 低效用地再开发 盐碱地" aria-describedby="externalQueryHelp externalError"></label><label class="external-field"><span>匹配方式</span><select data-filter="mode"><option value="all"${ui.filters.mode === 'all' ? ' selected' : ''}>AND · 全部词</option><option value="any"${ui.filters.mode === 'any' ? ' selected' : ''}>OR · 任一词</option></select></label><button class="external-button external-primary" type="submit">检索已采集资料</button><p id="externalQueryHelp" class="external-help">空格分词；双引号检索短语。检索对象是此页当前已收录资料，不会发起网络请求。</p></form>
-    <section class="external-results" aria-labelledby="externalResultsHeading"><div class="external-results-head"><h2 id="externalResultsHeading" tabindex="-1">检索结果</h2><span>每页20条 · 按文本命中排序</span></div><p id="externalStatus" role="status" aria-live="polite"></p><p id="externalError" role="alert" hidden></p><div id="externalResultBody"></div></section>
+    <section class="external-results" aria-labelledby="externalResultsHeading"><div class="external-results-head"><h2 id="externalResultsHeading" tabindex="-1">检索结果</h2><span>每页20条 · 有词按命中，空词优先正文与实践候选</span></div><p id="externalStatus" role="status" aria-live="polite"></p><p id="externalError" role="alert" hidden></p><div id="externalResultBody"></div></section>
     <section class="external-online" aria-labelledby="externalOnlineHeading"><div class="external-results-head"><h2 id="externalOnlineHeading" tabindex="-1">在线检索域（试运行）</h2><span>联网 · 结果未核验</span></div>
       <p class="external-online-note"><strong>与上方检索不同：</strong>这里会<strong>联网</strong>，由应用主进程向已批准的政府站点检索入口发起请求（域名白名单、单站限时、同义词轮询与分页抓取、不发凭据）。返回的是<strong>在线页面标题与链接，未经核验</strong>，不进入离线快照，也不计入任何统计。检索中途可停止并保留已取回部分；同一会话内重复检索命中临时缓存（存于系统临时文件夹，程序退出时自动清除）。多数站点的检索页由脚本渲染，服务端取不到条目时按指向列出跳转条目（含网址与来源概述）。</p>
-      <form class="external-search" id="externalOnlineForm"><label class="external-field external-query"><span>在线检索词</span><input id="externalOnlineQuery" type="search" maxlength="60" autocomplete="off" placeholder="如：全域土地综合整治" aria-describedby="externalOnlineHelp"></label><button class="external-button external-primary" type="submit">向已批准站点检索</button><button class="external-button" type="button" data-action="bing-gov">必应限定政府网站</button><button class="external-button external-quiet" type="button" data-action="online-sources">查看来源清单</button><p id="externalOnlineHelp" class="external-help">“必应限定政府网站”会在新标签页搜索 <code>site:gov.cn + 关键词</code>；无需安装桌面应用。其它实时多站检索仍仅在桌面版可用。</p></form>
+      <form class="external-search" id="externalOnlineForm"><label class="external-field external-query"><span>在线检索词</span><input id="externalOnlineQuery" ${isDesktop ? '' : 'disabled'} type="search" maxlength="60" autocomplete="off" placeholder="如：全域土地综合整治" aria-describedby="externalOnlineHelp"></label><button class="external-button external-primary" type="submit"${isDesktop ? '' : ' disabled'}>向已批准站点检索</button><button class="external-button external-quiet" type="button" data-action="online-sources">查看来源清单</button><p id="externalOnlineHelp" class="external-help">${isDesktop ? '与离线检索相互独立：离线结果来自随包快照，在线结果来自本次请求。' : 'Web版可查看随版本保存的来源清单；跨站在线聚合检索请使用桌面版。'}</p></form>
       <p id="externalOnlineStatus" role="status" aria-live="polite"></p><div id="externalOnlineBody"></div>
     </section>
-    <details class="external-coverage" id="externalCoverage"><summary>采集覆盖与证据口径</summary><p>仅表示已经运行的公开来源目录和列表页；未配置或未扫描地区不代表没有相关实践。一个政府网站的承载不等于其为发文机关；“本库外候选”须核实项目地点、项目主体及本库重合情况。标注「与本库重合」的记录只做标记、不从外部库删除，其中由案名地点后缀推定的重合已注明为派生判定，需人工复核。</p><ul>${meta.sourceCoverage.map(row => `<li><strong>${esc(row.region)}</strong>：${esc(row.status === 'scanned' ? '已扫描' : row.status === 'attempted-no-body' ? '尝试但未取得正文' : '尚未配置')} · ${esc(row.sources.join('、') || '无启用来源')} · 列表页 ${esc(row.listPages)} · 正文 ${esc(row.bodyArticles)} · 元数据 ${esc(row.metadataOnly)} · 错误 ${esc(row.errors)}</li>`).join('')}</ul><p>提取正文不代表完整原文。摘录为自动选取的原文片段，未核验完整性；政策文件和实践候选分开标记。转载不作为独立佐证。采集日期不等于发布日期。</p></details>
+    <details class="external-coverage" id="externalCoverage"><summary>采集覆盖与证据口径</summary><p>以下按随包保留的全部网页记录累计统计，不再用最后一次增量采集的任务范围代替累计覆盖。快照发布于 ${esc(meta.promotedAt?.slice(0,10) || '未记录')}，最新正文采集于 ${esc(meta.latestContentCaptureAt?.slice(0,10) || '未记录')}；发布快照不表示当天重新抓取全部网页。维护端配置 ${esc(meta.configuredSources ?? 0)} 个来源，不代表各来源当前均可访问；在线入口另见“查看来源清单”。未收录地区不代表没有相关实践。一个政府网站的承载不等于其为发文机关；“本库外候选”须核实项目地点、项目主体及本库重合情况。标注「与本库重合」的记录只做标记、不从外部库删除，其中由案名地点后缀推定的重合已注明为派生判定，需人工复核。</p><ul>${meta.sourceCoverage.map(row => `<li><strong>${esc(row.region === '国家' ? '国家级来源' : row.region)}</strong>：${esc(row.status === 'has-body' ? '已收录正文' : row.status === 'metadata-only' ? '仅收录元数据' : '快照暂无记录')} · 正文 ${esc(row.bodyArticles)} · 元数据 ${esc(row.metadataOnly)}${row.sources.length ? `<br>来源：${esc(row.sources.map(id => sourceLabel(meta, id)).join('、'))}` : ''}</li>`).join('')}</ul><p>提取正文不代表完整原文。摘录为自动选取的原文片段，未核验完整性；政策文件和实践候选分开标记。转载不作为独立佐证。采集日期不等于发布日期。</p></details>
   </main></div></div>`;
 }
 
 function resultCard(hit, number) {
   const record = hit.record; const external = record.external; const part = record.parts?.[hit.partIndex];
   const practice = (external.practices || []).map(item => [item.locality?.label, item.locality?.province, item.locality?.city, item.locality?.county, item.projectName].filter(Boolean).join(' · ')).filter(Boolean);
-  const excerpt = external.essentialExcerpt?.segments?.slice(0,2).map(item => item.text).join(' … ') || hit.snippet || '尚无可显示原文摘录。';
+  const excerpt = record.coverage === 'metadata' ? '当前仅收录标题、日期和来源线索，尚未取得可读正文；可打开原始网页核对。' : external.essentialExcerpt?.segments?.slice(0,2).map(item => item.text).join(' … ') || hit.snippet || '尚无可显示原文摘录。';
   const sourceLine = external.declaredSource?.name ? `页面标注来源：${external.declaredSource.name}` : '页面未明确标注来源';
   const date = external.published?.value || '发布日期未披露';
   const coverage = record.coverage === 'extracted' ? '已提取 · 未核验完整' : '仅有元数据';
   const allRelated = hit.groupRecords?.length > 1 ? `<details class="external-reposts"><summary>${hit.groupRecords.length} 个相同文本发布页</summary><ul>${hit.groupRecords.map(item => `<li><a href="${esc(safeUrl(item.url))}" data-action="open" data-url="${esc(safeUrl(item.url))}">${esc(item.external.host.siteName)} · ${esc(item.title)}</a></li>`).join('')}</ul></details>` : '';
   return `<article class="external-card"><div class="external-card-head"><span class="external-rank">${number}</span><div><div class="external-badges"><span>${esc(labels[external.articleKind] || external.articleKind)}</span><span>${esc(labels[external.relation?.status] || external.relation?.status || '关系待核')}</span><span>${esc(coverage)}</span>${external.topics.map(topic => `<span>${esc(topic)}</span>`).join('')}</div><h3><button type="button" data-action="read" data-record="${esc(record.id)}">${marked(record.title, ui.terms)}</button></h3></div></div>
   <p class="external-card-meta"><strong>承载网站：</strong>${esc(external.host.siteName)} · ${esc(external.host.hostname)}<br><strong>${esc(sourceLine)}</strong> · ${esc(date)} · 采集 ${esc(external.lastContentCaptureAt || external.firstCapturedAt || '日期未记录')}<br><strong>实践地点：</strong>${esc(practice.join(' / ') || (external.practices?.length ? '地点待核' : '未识别具体实践'))}</p>
-  <p class="external-excerpt-label">关键原文摘录 · 自动选段，未核验完整原文</p><p class="external-excerpt">${marked(excerpt, ui.terms)}</p>
+  <p class="external-excerpt-label">${record.coverage === 'metadata' ? '正文收录状态' : '关键原文摘录 · 自动选段，未核验完整原文'}</p><p class="external-excerpt">${marked(excerpt, ui.terms)}</p>
   <div class="external-card-actions"><button class="external-button" data-action="read" data-record="${esc(record.id)}">查看收录正文与出处</button>${safeUrl(record.url) ? `<button class="external-button external-quiet" data-action="open" data-url="${esc(safeUrl(record.url))}">打开原始网页</button>` : ''}</div>${allRelated}</article>`;
 }
 
@@ -144,23 +148,34 @@ function reader(record) {
     return `<section class="external-paragraph" id="${esc(record.id)}-${esc(paragraph.id)}"><span class="external-paragraph-id">${esc(paragraph.id)}</span><p>${marked(paragraph.text, terms)}</p>${selected}</section>`;
   }).join('');
   const source = ext.declaredSource?.name ? esc(ext.declaredSource.name) : '页面未明确标注';
-  const warnings = [...(ext.quality?.warnings || []), ext.quality?.review === 'pending' ? '实践判定仍待人工复核' : ''].filter(Boolean);
-  return `<div class="external-reader-shell"><nav class="external-reader-bar"><button class="external-button" data-action="back">返回域外检索</button>${safeUrl(record.url)?`<button class="external-button external-primary" data-action="open" data-url="${esc(safeUrl(record.url))}">打开原始网页</button>`:''}</nav><article class="external-reader"><p class="external-eyebrow">原文提取与来源记录</p><h1>${marked(record.title, ui.terms)}</h1><dl><div><dt>承载网站</dt><dd>${esc(ext.host.siteName)} · ${esc(ext.host.hostname)}</dd></div><div><dt>页面标注来源</dt><dd>${source}</dd></div><div><dt>发布机关</dt><dd>${esc(ext.issuer?.name || '未能确认')}</dd></div><div><dt>发布日期</dt><dd>${esc(ext.published?.value || '未披露')} · 精度 ${esc(ext.published?.precision || '未知')}</dd></div><div><dt>主题族</dt><dd>${ext.topics.map(esc).join('、') || '无正文命中'}</dd></div><div><dt>判定状态</dt><dd>${esc(labels[ext.relation?.status]||ext.relation?.status||'待核')} · ${esc(labels[ext.articleKind]||ext.articleKind)}</dd></div><div><dt>页面地址</dt><dd><a href="${esc(safeUrl(record.url))}" data-action="open" data-url="${esc(safeUrl(record.url))}">${esc(record.url)}</a></dd></div><div><dt>正文哈希</dt><dd>${esc(ext.textSha256 || '无')}</dd></div></dl><aside class="external-warning"><strong>覆盖说明：</strong>正文由本地规则从网页提取，未核验完整性；以下摘录是原文选段，不是摘要改写。站点、原文标注来源和发文机关彼此不同，未核实的信息已留空。${warnings.length?`<br><strong>待核事项：</strong>${esc(warnings.join('；'))}`:''}</aside><section class="external-article-text"><h2>已提取网页正文</h2>${paragraphHtml || '<p>未取得可检索正文，仅保留发现线索元数据。</p>'}</section><button class="external-button" data-action="back">返回域外检索</button></article></div>`;
+  const warningLabels = { 'issuer-unverified': '发布机关尚未核实', 'acquisition:too-short': '提取文本过短，未作正文收录', 'publication-date-unknown': '发布日期未披露', 'acquisition:javascript-shell': '网页依赖脚本加载，未取得正文', 'decoded:gb2312': '原页使用GB2312编码，已转换为可读文本' };
+  const warnings = [...(ext.quality?.warnings || []).map(value => warningLabels[value] || '该条资料尚有待复核事项'), ext.quality?.review === 'pending' ? '实践判定仍待人工复核' : ''].filter(Boolean);
+  return `<div class="external-reader-shell"><nav class="external-reader-bar"><button class="external-button" data-action="back">返回域外检索</button>${safeUrl(record.url)?`<button class="external-button external-primary" data-action="open" data-url="${esc(safeUrl(record.url))}">打开原始网页</button>`:''}</nav><article class="external-reader"><p class="external-eyebrow">原文提取与来源记录</p><h1>${marked(record.title, ui.terms)}</h1><dl><div><dt>承载网站</dt><dd>${esc(ext.host.siteName)} · ${esc(ext.host.hostname)}</dd></div><div><dt>页面标注来源</dt><dd>${source}</dd></div><div><dt>发布机关</dt><dd>${esc(ext.issuer?.name || '未能确认')}</dd></div><div><dt>发布日期</dt><dd>${esc(ext.published?.value || '未披露')} · 精度 ${esc(({day:'日',month:'月',year:'年',unknown:'未披露'})[ext.published?.precision] || '未披露')}</dd></div><div><dt>资料主题</dt><dd>${ext.topics.map(topic => esc(familyLabel(topic))).join('、') || '无正文命中'}</dd></div><div><dt>判定状态</dt><dd>${esc(labels[ext.relation?.status]||ext.relation?.status||'待核')} · ${esc(labels[ext.articleKind]||ext.articleKind)}</dd></div><div><dt>页面地址</dt><dd><a href="${esc(safeUrl(record.url))}" data-action="open" data-url="${esc(safeUrl(record.url))}">${esc(record.url)}</a></dd></div><div><dt>正文哈希</dt><dd>${esc(ext.textSha256 || '无')}</dd></div></dl><aside class="external-warning"><strong>覆盖说明：</strong>正文由本地规则从网页提取，未核验完整性；以下摘录是原文选段，不是摘要改写。站点、原文标注来源和发文机关彼此不同，未核实的信息已留空。${warnings.length?`<br><strong>待核事项：</strong>${esc(warnings.join('；'))}`:''}</aside><section class="external-article-text"><h2>已提取网页正文</h2>${paragraphHtml || '<p>未取得可检索正文，仅保留发现线索元数据。</p>'}</section><button class="external-button" data-action="back">返回域外检索</button></article></div>`;
 }
 
 const ONLINE_STATUS = {
   ok: '已取回条目', partial: '部分取回（超时或中断截断）', handoff: '仅跳转（检索页由脚本渲染）', 'query-not-applied': '站内检索未响应关键词',
-  'no-results': '未解析到条目', 'http-error': '站点返回错误', timeout: '超时', failed: '请求失败', blocked: '域名不在白名单', cancelled: '已取消',
+  'no-results': '未解析到条目', 'http-error': '站点返回错误', timeout: '超时', failed: '请求失败', blocked: '域名不在白名单', 'robots-disallowed': '站点规则不允许自动请求', cancelled: '已取消',
 };
+const sourceReason = reason => ({
+  'search-page-is-js-rendered': '请使用浏览器访问该站检索页',
+  'results-unrelated-to-query': '返回内容未匹配本次关键词',
+  'page-returned-no-parseable-links': '站点未返回可识别的结果链接',
+  'host-not-whitelisted': '入口主机未获批准',
+  'robots.txt disallows this path': '网站规则禁止自动访问此路径',
+  timeout: '本来源请求超时', 'overall-timeout': '达到整体检索时限',
+  cancelled: '用户停止检索', 'partial-timeout': '超时前已保留部分结果',
+  'partial-cancelled': '停止前已保留部分结果',
+}[reason] || (/^http-\d+$/.test(reason) ? `网站返回 HTTP ${reason.slice(5)}` : reason ? '本次请求未完整完成，可访问站点检索页核对' : ''));
 
 function onlineSourceRow(source) {
-  const label = ONLINE_STATUS[source.status] || source.status;
+  const label = ONLINE_STATUS[source.status] || '来源状态待确认';
   const sample = source.sampleTitles?.length ? `<p class="external-help">页面返回但与关键词无关，例如：${esc(source.sampleTitles[0])}</p>` : '';
   const items = source.results?.length
     ? `<ul class="external-online-list">${source.results.map(row => `<li><a href="${esc(safeUrl(row.url))}" data-action="online-open" data-url="${esc(safeUrl(row.url))}">${esc(row.title)}</a></li>`).join('')}</ul>`
     : '';
   const link = safeUrl(source.searchPage) ? `<a href="${esc(safeUrl(source.searchPage))}" data-action="online-open" data-url="${esc(safeUrl(source.searchPage))}">在该站检索页打开</a>` : '';
-  return `<details class="external-online-source"><summary><strong>${esc(source.siteName)}</strong> · ${esc(source.region)} · <span class="external-online-state">${esc(label)}</span>${source.results?.length ? ` · ${source.results.length} 条` : ''}</summary>${items}${sample}<p class="external-help">${link}${source.reason ? ` · 说明：${esc(source.reason)}` : ''}</p></details>`;
+  return `<details class="external-online-source"><summary><strong>${esc(source.siteName)}</strong> · ${esc(source.region)} · <span class="external-online-state">${esc(label)}</span>${source.results?.length ? ` · ${source.results.length} 条` : ''}</summary>${items}${sample}<p class="external-help">${link}${source.reason ? ` · 说明：${esc(sourceReason(source.reason))}` : ''}</p></details>`;
 }
 
 function onlineBody() {
@@ -182,7 +197,7 @@ function onlineBody() {
   /* 仅跳转来源按指向分别列条：一条一个检索入口，显示网址与来源概述，浏览器打开即可见结果 */
   const handoffs = (result.sources || []).filter(source => source.status === 'handoff' && safeUrl(source.searchPage));
   const handoffList = handoffs.length
-    ? `<div class="external-online-results"><h3>仅跳转来源（浏览器打开即得结果）</h3>${handoffs.map(source => `<article class="external-online-card"><h4><a href="${esc(safeUrl(source.searchPage))}" data-action="online-open" data-url="${esc(safeUrl(source.searchPage))}">${esc(source.siteName)}</a></h4><p class="external-help">${esc(source.region)}${source.summary ? ` · ${esc(source.summary)}` : ''}<br>${esc(source.searchPage)}</p></article>`).join('')}</div>`
+    ? `<div class="external-online-results"><h3>站点检索入口（结果以站点当前返回为准）</h3>${handoffs.map(source => `<article class="external-online-card"><h4><a href="${esc(safeUrl(source.searchPage))}" data-action="online-open" data-url="${esc(safeUrl(source.searchPage))}">${esc(source.siteName)}</a></h4><p class="external-help">${esc(source.region)}${source.summary ? ` · ${esc(source.summary)}` : ''}<br>${esc(source.searchPage)}</p></article>`).join('')}</div>`
     : '';
   return header + results + handoffList + `<div class="external-online-sources">${result.sources.map(onlineSourceRow).join('')}</div>`;
 }
@@ -215,14 +230,14 @@ function renderOnline(page) {
     const closeButton = `<p class="external-online-sources-toolbar"><button class="external-button external-quiet" type="button" data-action="online-close-sources">关闭来源清单</button></p>`;
     if (online.sources) {
       status.textContent = `已批准来源 ${online.sources.adapters.length} 个，域名白名单 ${online.sources.hosts.length} 个。`;
-      body.innerHTML = `${closeButton}<div class="external-online-sources">${online.sources.adapters.map(item => `<p class="external-help"><strong>${esc(item.siteName)}</strong> · ${esc(item.region)} · 模式 ${esc(item.mode)} · 验证 ${esc(item.verified)}</p>`).join('')}<p class="external-help">允许访问的域名：${esc(online.sources.hosts.join('、'))}</p></div>`;
+      body.innerHTML = `${closeButton}<div class="external-online-sources">${online.sources.adapters.map(item => `<p class="external-help"><strong>${esc(item.siteName)}</strong> · ${esc(item.region)} · ${esc(({ 'html-parse': '网页条目解析', 'json-api': '公开接口解析', handoff: '浏览器跳转' })[item.mode] || '入口待确认')} · 入口核验 ${esc(item.verified)}</p>`).join('')}<p class="external-help">允许访问的域名：${esc(online.sources.hosts.join('、'))}</p></div>`;
     } else {
       status.textContent = '正在读取来源清单…';
       body.innerHTML = `${closeButton}<p class="external-help">来源清单读取中…</p>`;
     }
     return;
   }
-  if (!isDesktop) { status.textContent = '网页端可使用“必应限定政府网站”；实时多站聚合检索仅在桌面应用中可用。'; body.innerHTML = ''; return; }
+  if (!isDesktop) { status.textContent = '在线检索仅在桌面应用中可用（浏览器环境不绕开白名单联网）。'; body.innerHTML = ''; return; }
   status.textContent = online.result ? '' : '尚未发起在线检索。';
   body.innerHTML = onlineBody();
 }
@@ -285,7 +300,6 @@ function bind(page) {
     if(action==='page'&&!id&&latest) { collect(page); ui.query=ui.draft; ui.offset=Math.max(0,ui.offset+Number(control.dataset.step)*PAGE_SIZE); update(page); return; }
     if(action==='read'&&!id) { collect(page); ui.query=ui.draft; ui.scrollTop=window.scrollY; ui.focus=control.dataset.record; navigate(VIEW.EXTERNAL,{recordId:control.dataset.record},{index:true}); return; }
     if(action==='open'||action==='online-open') { event.preventDefault(); const url=safeUrl(control.dataset.url); if(!url) { notify('仅允许打开安全的 HTTPS 原始网页。','warn'); return; } void openExternal(url).then(result=>{ if(result===false||result?.ok===false) throw new Error('无法打开原始网页。'); }).catch(error=>notify(msg(error),'error')); return; }
-    if(action==='bing-gov') { event.preventDefault(); const query=String(page.querySelector('#externalOnlineQuery')?.value||'').trim(); if(query.length<2){notify('请至少输入 2 个字符。','warn');page.querySelector('#externalOnlineQuery')?.focus();return;} const url=`https://www.bing.com/search?q=${encodeURIComponent(`site:gov.cn ${query}`)}`; void openExternal(url); return; }
     if(action==='online-sources') { online.showSources=true; online.sources=null; renderOnline(page); void getOnlineSources().then(result=>{ if(!current(page,token,id)) return; online.sources=result; renderOnline(page); }).catch(error=>notify(msg(error),'error')); return; }
     if(action==='online-close-sources') { online.showSources=false; renderOnline(page); return; }
     if(action==='online-cancel') { void cancelOnlineSearch(); return; }

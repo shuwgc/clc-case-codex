@@ -82,7 +82,13 @@ export function createExternalSearch(records = []) {
       const results = [...groups.values()].map(hits => {
         hits.sort((a, b) => b.score - a.score || Number(b.record.external?.quality?.review === 'accepted') - Number(a.record.external?.quality?.review === 'accepted'));
         return { ...hits[0], groupRecords: hits.map(hit => hit.record) };
-      }).sort((a, b) => b.score - a.score || a.record.title.localeCompare(b.record.title, 'zh-CN'));
+      }).sort((a, b) => {
+        if (terms.length) return b.score - a.score || a.record.title.localeCompare(b.record.title, 'zh-CN');
+        const kinds = { practice: 0, overview: 1, policy: 2, other: 3, uncertain: 4 };
+        return Number(b.record.coverage === 'extracted') - Number(a.record.coverage === 'extracted')
+          || (kinds[a.record.external?.articleKind] ?? 5) - (kinds[b.record.external?.articleKind] ?? 5)
+          || a.record.title.localeCompare(b.record.title, 'zh-CN');
+      });
       return { results: results.slice(offset, offset + limit), total: results.length, elapsedMs: globalThis.performance.now() - started, terms };
     },
   };

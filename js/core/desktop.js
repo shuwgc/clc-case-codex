@@ -67,7 +67,10 @@ export async function searchOnline(query) {
 
 /** 在线检索可用来源清单 */
 export async function getOnlineSources() {
-  if (!isDesktop || typeof bridge.getOnlineSources !== 'function') return { adapters: [], hosts: [] };
+  if (!isDesktop || typeof bridge.getOnlineSources !== 'function') {
+    const module = await import('../../data/search-sources.js');
+    return module.SEARCH_SOURCES;
+  }
   return bridge.getOnlineSources();
 }
 

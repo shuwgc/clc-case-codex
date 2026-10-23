@@ -1,3 +1,4 @@
+import { coverCreditHtml } from './cover-credit.js';
 import { registerNavigationContext, isRestoringNavigation, rememberNavigation, jumpToTarget } from '../core/navigation-history.js';
 /* ================================================================
  * 组件：单案例「查看政策工具」页
@@ -154,7 +155,7 @@ function renderHero(d, project) {
         <div class="pg-metric"><b>${d.stats.innovations}</b><span>创新工具</span></div>
         <div class="pg-metric"><b>${d.stats.mechanisms}</b><span>政策机制</span></div>
       </div>
-      <div class="pg-hero-strip">${caseStripHtml(d.id)}</div>
+      <div class="pg-hero-strip">${caseStripHtml(d.id)}</div>${coverCreditHtml(d.id)}
     </div>
   </div>`;
 }

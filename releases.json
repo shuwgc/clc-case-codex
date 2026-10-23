@@ -453,6 +453,35 @@
           "downloadUrl": "https://github.com/shuwgc/clc-case-codex/releases/download/v0.6.7/CLC-v067-navigation-fix-x64.exe"
         }
       ]
+    },
+    {
+      "id": "v100-release",
+      "version": "1.0.0",
+      "label": "正式发布版（2026-10-23）",
+      "bytes": 94329269,
+      "sha256": "b39f01eb8bd7c106279f31bcbcba74e284bbb91b01330a714a2d28caef04557f",
+      "summary": "完善政策工具统计说明与创新条目查看，核对域外检索覆盖口径、案例配图和联系邮箱；修正交互必要性计算，并同步发布站与Web版。",
+      "date": "2026-10-23",
+      "legacy": false,
+      "downloadUrl": "https://github.com/shuwgc/clc-case-codex/releases/download/v1.0.0/CLC-v1.0.0-x64.exe",
+      "publicationStatus": "published",
+      "screenshots": [
+        {
+          "src": "current-home.jpg",
+          "caption": "1.0.0正式版：案例库首页",
+          "provenance": "1.0.0源码实际渲染，包内运行时文件逐一比对。"
+        },
+        {
+          "src": "current-external-corpus.jpg",
+          "caption": "1.0.0正式版：域外累计收录与中文来源筛选",
+          "provenance": "1.0.0源码实际渲染，离线数据包真实条目。"
+        },
+        {
+          "src": "current-policy-tools.jpg",
+          "caption": "1.0.0正式版：政策工具内容与创新依据",
+          "provenance": "1.0.0源码实际渲染；完整核查记录与文件哈希随交付保留。"
+        }
+      ]
     }
   ],
   "missingInstallers": [

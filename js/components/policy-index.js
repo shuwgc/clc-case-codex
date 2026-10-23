@@ -19,7 +19,7 @@ const I_CARET = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" ari
 const I_EXT = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M14 3h7v7M10 14L21 3M21 14v5a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
 /* 页内筛选状态 */
-const UI_BASE = { batch: '', province: '', mech: '', query: '', sort: 'id' };
+const UI_BASE = { batch: '', province: '', mech: POLICY_META.mechanisms[0]?.name || '', query: '', sort: 'id', caseIndexOpen: false, innovationOpen: [] };
 let ui = { ...UI_BASE };
 registerNavigationContext('policy-index', () => ui, value => Object.assign(ui, value));
 
@@ -46,8 +46,12 @@ export function renderPolicyIndex(state) {
       ${renderNationalOverview()}
       ${renderStats()}
       ${renderMechanismDist()}
-      ${renderToolbar()}
-      <div id="ovBody">${renderBody()}</div>
+      ${renderInnovationPanel()}
+      <details class="ov-case-index" id="ovCaseIndex" ${ui.caseIndexOpen ? 'open' : ''}>
+        <summary>按案例查看全部政策工具<span>${POLICY_META.totalCases} 个案例 · 含未标注创新的工具</span></summary>
+        ${renderToolbar()}
+        <div id="ovBody">${renderBody()}</div>
+      </details>
     </div>`;
 
   bind(page);
@@ -58,8 +62,11 @@ export function renderPolicyIndex(state) {
     ['#ovProv .pg-chip', 'province', 'prov'],
     ['#ovSort .pg-chip', 'sort', 'sort'],
     ['.mech-row[data-mech]', 'mech', 'mech'],
-  ]) page.querySelectorAll(selector).forEach(button =>
-    button.classList.toggle('active', (button.dataset[attr] || '') === ui[key]));
+  ]) page.querySelectorAll(selector).forEach(button => {
+    const selected = (button.dataset[attr] || '') === ui[key];
+    button.classList.toggle('active', selected);
+    if (button.matches('.mech-row')) button.setAttribute('aria-pressed', String(selected));
+  });
   page.querySelector('#ovSearch').value = ui.query;
   renderDrill();
   window.scrollTo({ top: 0, behavior: 'auto' });
@@ -134,18 +141,24 @@ function renderNationalOverview() {
 
     <div class="pg-note">
       <span class="lb">这份综述是什么</span>
-      本库收录的 ${POLICY_META.totalCases} 个案例工具箱中，曾有 43 个案例各自含有一套<b>逐字相同</b>的
-      15 条国家级通用政策工具。为避免 40 多份重复内容，本轮已将其连同依据的 6 份国家级文件整体分离，
-      统一在本节呈现（共删除 645 条重复工具行、246 条重复附表条目）；各案例页自此只保留其专属的
-      省／市／区县政策实践。<b>读法</b>：案例层回答「这个案例用了哪些本地政策」，本节回答
-      「国家层面提供了哪些通用工具」，两者合起来才是完整的政策图景。
+      国家级通用工具在各案例工具箱中曾有重复收录，本库将其中相同的 15 项工具与 6 份依据文件归并于此，
+      每项只展示一次；下文再按 ${POLICY_META.totalCases} 个案例汇总各自的政策工具。
+      <b>读法</b>：先了解通用政策框架，再看案例采取的具体举措；本节是本库已整理的工具综述，不是国家政策的完整清单。
     </div>
 
     <div class="ov-stats" style="margin-top:14px">
-      <div class="ov-stat teal"><b>${s.tools}</b><span>国家级通用工具</span><small>按六类机制归类</small></div>
+      <div class="ov-stat teal"><b>${s.tools}</b><span>国家级通用工具</span><small>按 ${s.mechanisms} 类机制归类</small></div>
       <div class="ov-stat gold"><b>${s.docs}</b><span>国家级依据文件</span><small>核验 A 级 ${s.gradeA} 份</small></div>
-      <div class="ov-stat"><b>${s.implementation}</b><span>全面实施</span><small>试点推进 ${s.pilot} 项</small></div>
-      <div class="ov-stat"><b>${s.mechanisms}</b><span>涉及机制类别</span><small>第五类在国家层面无对应工具</small></div>
+      <div class="ov-stat"><b>${s.implementation} + ${s.pilot}</b><span>通用工具的实施分类</span><small>全面实施 ${s.implementation} 项，试点推进 ${s.pilot} 项</small></div>
+      <div class="ov-stat"><b>${s.mechanisms} / ${POLICY_META.mechanisms.length}</b><span>通用工具覆盖的机制类别</span><small>本库七类机制中涉及六类</small></div>
+    </div>
+
+    <div class="pg-note policy-count-note">
+      <span class="lb">这些数字怎样对应</span>
+      ${s.implementation} 项「全面实施」与 ${s.pilot} 项「试点推进」合计 ${s.tools} 项通用工具；分类沿用工具箱的整理标注，
+      用于区分政策适用方式，不表示 ${s.implementation} 个案例已完成实施。
+      七类机制是本库整理工具时使用的分类框架；本节未列入第五类「加大区域综合整治实施力度」的通用工具，
+      不代表国家层面没有相关政策。下文案例工具另行统计。
     </div>
 
     <div class="pg-note" style="margin-top:14px">
@@ -154,7 +167,7 @@ function renderNationalOverview() {
     <div class="nat-stages">${stages}</div>
 
     <div class="pg-note" style="margin-top:14px">
-      <span class="lb">十五类工具 · 点开查看举措与依据</span>
+      <span class="lb">十五项通用工具 · 按机制展开查看举措与依据</span>
     </div>
     <div class="mech-groups">${NATIONAL.mechanisms.map(m => `
       <details class="mech-group">
@@ -230,13 +243,13 @@ function renderHero() {
       <h1 class="pg-title">全域土地综合整治试点案例<br />政策工具索引</h1>
       <p class="pg-sub">
         汇总第一、二、三批共 ${m.totalCases} 个试点案例的政策激励工具箱，梳理
-        ${m.totalTools} 项地方政策工具与 ${m.totalDocs} 份政策文件（去重后 ${m.uniqueDocs} 份）；
+        ${m.totalTools} 项案例政策工具与 ${m.totalDocs} 条政策文件引用记录（去重后 ${m.uniqueDocs} 份文件）；
         国家级层面另有 15 条通用政策工具与 6 份依据文件，统一收录于本页最前方的「国家级政策工具综述」。
       </p>
       <div class="pg-metrics">
         <div class="pg-metric"><b>${m.totalCases}</b><span>试点案例</span></div>
         <div class="pg-metric"><b>${m.totalTools}</b><span>政策工具</span></div>
-        <div class="pg-metric"><b>${m.totalDocs}</b><span>政策文件引用</span></div>
+        <div class="pg-metric"><b>${m.totalDocs}</b><span>文件引用记录</span></div>
         <div class="pg-metric"><b>${m.totalInnovations}</b><span>创新工具</span></div>
       </div>
     </div>
@@ -251,21 +264,29 @@ function renderStats() {
   <section class="pg-section" id="statsStrip">
     <div class="ov-stats">
       <div class="ov-stat">
-        <b>${m.totalTools}</b><span>政策工具合计</span>
-        <small>其中创新工具 ${m.totalInnovations} 项</small>
+        <b>${m.totalTools}</b><span>案例政策工具</span>
+        <small>其中 ${m.totalInnovations} 项标注了创新点</small>
       </div>
       <div class="ov-stat teal">
-        <b>${m.totalDocs}</b><span>政策文件引用</span>
-        <small>去重后 ${m.uniqueDocs} 份文件</small>
+        <b>${m.totalDocs}</b><span>文件引用记录</span>
+        <small>同一文件跨案例可重复引用 · 去重 ${m.uniqueDocs} 份</small>
       </div>
       <div class="ov-stat gold">
-        <b>${m.totalGradeA}</b><span>核验 A 级</span>
-        <small>B 级 ${m.totalGradeB} 份</small>
+        <b>${m.totalGradeA}</b><span>A 级文件引用记录</span>
+        <small>B 级 ${m.totalGradeB} 条 · A + B = ${m.totalDocs}</small>
       </div>
       <div class="ov-stat">
-        <b>${m.totalImplementation}</b><span>全面实施</span>
-        <small>试点推进 ${m.totalPilot} 项</small>
+        <b>${m.totalImplementation}</b><span>标注「全面实施」的工具</span>
+        <small>另有 ${m.totalPilot} 项「试点推进」· 合计 ${m.totalTools}</small>
       </div>
+    </div>
+    <div class="pg-note policy-count-note">
+      <span class="lb">案例层的统计口径</span>
+      工具是整理出的政策举措，文件是工具引用的依据，两者不是一一对应关系；一项工具可引用多份文件，同一份文件也可支持多项工具。
+      ${m.totalInnovations} 项创新工具是 ${m.totalTools} 项工具的子集，按案例工具箱是否标注创新点统计，不是另加 ${m.totalInnovations} 项，也不表示全国首创。
+      「全面实施／试点推进」与「有无创新点」是两套分类，可相互交叉。
+      A 级表示可在官方渠道核对正文或明确公开内容，B 级表示名称与核心内容有官方引用而正文尚未公开；评级按引用记录计，不是 ${m.uniqueDocs} 份去重文件的评级汇总。
+      本节均不含上方国家级综述的 ${NATIONAL.stats.tools} 项通用工具与 ${NATIONAL.stats.docs} 份文件。
     </div>
   </section>`;
 }
@@ -280,11 +301,11 @@ function renderMechanismDist() {
   <section class="pg-section">
     <div class="pg-section-head">
       <h2 class="pg-section-title"><span class="idx">贰</span>政策机制分布</h2>
-      <span class="pg-section-note">全部 ${m.totalTools} 项工具按机制归类 · 点击可筛选案例</span>
+      <span class="pg-section-note">${m.totalTools} 项工具归入七类机制 · 点击查看该类创新点</span>
     </div>
     <div class="mech-dist">
       ${m.mechanisms.map(x => `
-        <button type="button" class="mech-row" data-mech="${esc(x.name)}" style="border:none;background:none;padding:0;text-align:left;width:100%">
+        <button type="button" class="mech-row" data-mech="${esc(x.name)}" aria-controls="ovDrill" aria-pressed="${x.name === ui.mech}">
           <span class="mech-name">
             <span class="no">${esc(x.no)}</span>
             <span class="tx">${esc(x.short)}</span>
@@ -292,9 +313,21 @@ function renderMechanismDist() {
           <span class="mech-track">
             <span class="mech-fill" style="width:${(x.count / max * 100).toFixed(1)}%"></span>
           </span>
-          <span class="mech-val"><b>${x.count}</b> 项 · 创新 ${x.innovations}</span>
+          <span class="mech-val"><b>${x.count}</b> 项 · 创新 <strong>${x.innovations}</strong> ${I_ARROW_R}</span>
         </button>`).join('')}
     </div>
+  </section>`;
+}
+
+function renderInnovationPanel() {
+  return `
+  <section class="pg-section ov-innovation-section" id="ovDrill" aria-labelledby="ovDrillTitle">
+    <div class="pg-section-head">
+      <h2 class="pg-section-title" id="ovDrillTitle" tabindex="-1"><span class="idx">叁</span>机制创新点</h2>
+      <span class="pg-section-note" id="ovDrillNote" role="status"></span>
+    </div>
+    <p class="ov-innovation-help">以下逐项展示案例工具箱标注的创新点；展开可读主要举措与依据文件，点击案例名称可查看完整工具箱。</p>
+    <div id="ovDrillBody"></div>
   </section>`;
 }
 
@@ -317,7 +350,7 @@ function renderToolbar() {
   return `
   <section class="pg-section">
     <div class="pg-section-head">
-      <h2 class="pg-section-title"><span class="idx">叁</span>案例索引</h2>
+      <h2 class="pg-section-title"><span class="idx">肆</span>案例查询</h2>
       <span class="pg-section-note" id="ovCount"></span>
     </div>
 
@@ -346,14 +379,6 @@ function renderToolbar() {
         </label>
       </div>
     </div>
-  </section>
-
-  <section class="pg-section" id="ovDrill" hidden>
-    <div class="pg-section-head">
-      <h2 class="pg-section-title"><span class="idx">肆</span><span id="ovDrillTitle">跨案例工具</span></h2>
-      <span class="pg-section-note" id="ovDrillNote"></span>
-    </div>
-    <div id="ovDrillBody"></div>
   </section>`;
 }
 
@@ -412,7 +437,6 @@ function card(c) {
   return `
   <button type="button" class="ov-card" data-case="${c.id}">
     <div class="ov-card-top">
-      <span class="ov-idx">${c.id}</span>
       <span class="ov-card-name">${esc(c.name)}</span>
     </div>
     <div class="ov-card-meta">
@@ -432,9 +456,8 @@ function card(c) {
 /* ---------- 跨案例工具透视 ---------- */
 
 /**
- * 点选某一政策机制后，列出「哪些案例、用了哪些工具」。
- * 由于几乎所有案例都覆盖了七大机制，按机制筛案例没有区分度；
- * 这里改为呈现该机制下的全部工具条目，按案例归组，更有参考价值。
+ * 点选某一政策机制后，直接展示该机制下标注的全部创新点。
+ * 创新点不截断；主要举措与文件依据使用原生 details 渐进展开。
  */
 function renderDrill() {
   const section = $('ovDrill');
@@ -450,7 +473,7 @@ function renderDrill() {
   const rows = [];
   CASES.forEach(c => {
     c.tools.forEach(t => {
-      if (t.mechanism === ui.mech) rows.push({ c, t });
+      if (t.mechanism === ui.mech && t.innovation) rows.push({ c, t });
     });
   });
 
@@ -459,46 +482,38 @@ function renderDrill() {
   const body = $('ovDrillBody');
 
   const short = POLICY_META.mechanisms.find(m => m.name === ui.mech)?.short || ui.mech;
-  if (title) title.textContent = `${short} · 跨案例工具`;
-  if (note) note.textContent = `${rows.length} 项工具 · 覆盖 ${new Set(rows.map(r => r.c.id)).size} 个案例`;
+  if (title) title.innerHTML = `<span class="idx">叁</span>${esc(short)} · 创新点`;
+  if (note) note.textContent = `${rows.length} 项创新工具 · 涉及 ${new Set(rows.map(r => r.c.id)).size} 个案例`;
 
   if (!body) return;
 
   if (!rows.length) {
-    body.innerHTML = `<div class="pg-empty"><strong>该机制下暂无工具</strong></div>`;
+    body.innerHTML = `<div class="pg-empty"><strong>该机制下暂无已标注的创新点</strong></div>`;
     return;
   }
 
-  /* 按案例归组，每案例内列出工具名与创新点摘要 */
-  const byCase = new Map();
-  rows.forEach(r => {
-    if (!byCase.has(r.c.id)) byCase.set(r.c.id, { c: r.c, tools: [] });
-    byCase.get(r.c.id).tools.push(r.t);
-  });
-
-  body.innerHTML = `<div class="ov-grid">${[...byCase.values()].map(({ c, tools }) => `
-    <div class="ov-card" style="cursor:default">
-      <div class="ov-card-top">
-        <span class="ov-idx">${c.id}</span>
-        <span class="ov-card-name">${esc(c.name)}</span>
+  body.innerHTML = `<div class="ov-innovation-list">${rows.map(({ c, t }) => {
+    const key = `${c.id}-${t.no}`;
+    const docs = t.deps.map(n => c.docs.find(d => d.no === n)).filter(Boolean);
+    return `
+    <article class="ov-innovation" data-innovation-case="${c.id}">
+      <div class="ov-innovation-meta">
+        <button type="button" class="ov-innovation-case" data-case="${c.id}">${esc(c.name)} ${I_ARROW_R}</button>
+        <span>${esc(c.batch)} · ${esc(t.category)}</span>
       </div>
-      <div class="ov-card-meta">
-        <span class="ov-mini">${esc(c.batch)}</span>
-        <span class="ov-mini">${esc(c.province)}</span>
-        <span class="ov-mini gold">本机制 ${tools.length} 项</span>
-      </div>
-      <ul class="drill-tools">
-        ${tools.map(t => `
-          <li>
-            <span class="dt-no">${circled(t.no)}</span>
-            <span class="dt-tx">
-              <strong>${esc(t.policyTitle)}</strong>
-              ${t.innovation ? `<em>${esc(clip(t.innovation, 46))}</em>` : ''}
-            </span>
-          </li>`).join('')}
-      </ul>
-      <button type="button" class="ov-card-go drill-go" data-case="${c.id}">查看该案例政策工具 ${I_ARROW_R}</button>
-    </div>`).join('')}</div>`;
+      <h3>${esc(t.policyTitle)}</h3>
+      <p class="ov-innovation-point"><span>创新点</span>${esc(t.innovation)}</p>
+      <details class="ov-innovation-detail" data-innovation-key="${key}" ${(ui.innovationOpen || []).includes(key) ? 'open' : ''}>
+        <summary>查看主要举措与政策依据 ${I_CARET}</summary>
+        <div class="ov-innovation-content">
+          <h4>主要举措</h4><p>${esc(t.detail)}</p>
+          <p class="ov-innovation-lead">牵头单位：${esc(t.lead || '未注明')}</p>
+          ${docs.length ? `<h4>政策依据</h4><ul>${docs.map(d => `<li>${esc(d.name)}${d.docNo && d.docNo !== '—' ? `（${esc(d.docNo)}）` : ''}</li>`).join('')}</ul>` : ''}
+          <button type="button" class="ov-card-go" data-case="${c.id}">前往案例工具箱核对文件与来源 ${I_ARROW_R}</button>
+        </div>
+      </details>
+    </article>`;
+  }).join('')}</div>`;
 }
 
 /* ================================================================
@@ -526,12 +541,20 @@ function bind(page) {
 
   /* 机制分布条 → 展开「跨案例工具透视」 */
   delegate(page, '.mech-row[data-mech]', 'click', (_e, row) => {
-    const val = row.dataset.mech;
-    ui.mech = ui.mech === val ? '' : val;
-    page.querySelectorAll('.mech-row').forEach(r =>
-      r.classList.toggle('active', r.dataset.mech === ui.mech));
+    ui.mech = row.dataset.mech;
+    page.querySelectorAll('.mech-row').forEach(r => {
+      const selected = r.dataset.mech === ui.mech;
+      r.classList.toggle('active', selected);
+      r.setAttribute('aria-pressed', String(selected));
+    });
     renderDrill();
+    const heading = $('ovDrillTitle');
+    heading?.focus({ preventScroll: true });
+    heading?.scrollIntoView({ block: 'start', behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' });
   });
+
+  page.removeEventListener('toggle', recordPolicyDisclosure, true);
+  page.addEventListener('toggle', recordPolicyDisclosure, true);
 
   /* 批次 / 地区筛选 */
   bindChips(page, '#ovBatch', 'batch', 'batch');
@@ -552,6 +575,16 @@ function bind(page) {
       refresh(page);
     });
   }
+}
+
+function recordPolicyDisclosure(event) {
+  const detail = event.target;
+  if (detail.id === 'ovCaseIndex') ui.caseIndexOpen = detail.open;
+  const key = detail.dataset?.innovationKey;
+  if (!key) return;
+  const expanded = new Set(ui.innovationOpen || []);
+  if (detail.open) expanded.add(key); else expanded.delete(key);
+  ui.innovationOpen = [...expanded];
 }
 
 /**

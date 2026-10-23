@@ -17,3 +17,5 @@
 程序快照：保留相应程序版本的实际界面；安装包及截图不能替代论文方法核验。
 
 字体子集：Noto Sans SC、Noto Serif SC，来源https://github.com/google/fonts ，保留assets/fonts/OFL-sans.txt及OFL-serif.txt。
+
+1.0.0程序配图逐案复核：44案使用自身相关报道实景，17/22/24案保留渐变。程序各案例显示报道出处和图注；民权任庄照片来自2020年大河网报道，明确标为地域背景而非2021年试点成效。程序照片登记见assets/covers/index.json。

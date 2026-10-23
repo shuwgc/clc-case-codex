@@ -1,5 +1,5 @@
-import { BUILD_LABEL } from '../data/build-info.js';
 import { initNavigationHistory, isRestoringNavigation } from './core/navigation-history.js';
+import { BUILD_LABEL } from '../data/build-info.js';
 /* ================================================================
  * 应用入口：装配状态、视图与交互
  * ----------------------------------------------------------------
@@ -250,11 +250,11 @@ async function bootstrap() {
     const meta = $('footerMeta');
     const suffix = '制作维护：上海大学全域土地综合整治项目组 · 数据来源：自然资源部';
     if (meta) {
-      meta.textContent = isDesktop ? `${suffix} · v${info.version} · ${BUILD_LABEL}` : `${suffix} · Web v0.6.7 · ${BUILD_LABEL}`;
+      meta.textContent = isDesktop ? `${suffix} · v${info.version} · ${BUILD_LABEL}` : `${suffix} · ${BUILD_LABEL}`;
     }
     document.title = isDesktop
       ? `${info.name} v${info.version}`
-      : '全域土地综合整治试点案例库 · Web v0.6.7';
+      : '全域土地综合整治试点案例库';
   } catch {
     /* 拿不到版本信息不影响主流程 */
   }

@@ -3,7 +3,7 @@
  * ------------------------------------------------------------------
  * 只读呈现 10-18 收口后的官方 fsQCA 分析成果（FSQCA_OFFICIAL，构建期从权威
  * xlsx 一次性抽取，运行时绝不重算）。与「组态分析」交互页各司其职：
- * 展示页 = 官方定稿结论，分析页 = 自由探索。
+ * 展示页 = 编码基线复算与注明来源的充分性结果，分析页 = 自由探索。
  *
  * 口径声明（R-a）：本页判定口径为官方 xlsx 原样（PRI ≥0.5），与交互页默认
  * PRI ≥0.75 不同，hero 显著注记 + S3/S4 页脚复用 meta.priNote 单处维护文案。
@@ -15,12 +15,13 @@ import { esc, delegate } from '../core/dom.js';
 import { notify } from '../core/desktop.js';
 import { FSQCA_OFFICIAL } from '../../data/fsqca-official-results.js';
 import { FSQCA_SCORES } from '../../data/fsqca-scores.js';
+import { baselineNecessity, BASELINE_OUTCOMES } from '../core/necessity-baseline.js';
 
 const O = FSQCA_OFFICIAL;
 const OUTCOME_NAMES = { AGR: '农用地整治', CON: '建设用地整治', ECO: '生态保护修复', SPE: '特色整治' };
 const PUBLIC_LIMITS = [
   '47 个案例均为成功试点，条件侧普遍偏高，RES、SPA 均无案例低于 0.5；样本的有限差异限制了充分性分析的解释范围。',
-  '条件普遍偏高可能产生天花板效应。RoN 在一致性恰为 1.000 时无有效值，此类必要性关系不能仅凭一致性作出判断。',
+  '条件普遍偏高可能产生天花板效应。高必要性一致性不等于高相关性，也不等于充分条件；需结合 RoN、测量口径与案例证据判断。',
 ];
 
 /* 来源标注统一格式：来源：文件名 · sheet · 行号区间（docx 用 · 段 n-m / · 表 n） */
@@ -57,46 +58,20 @@ function overviewCards() {
 }
 
 /* ---------- S2 必要条件 ---------- */
+const necFit = value => value == null ? '不计算' : value.toFixed(4);
+function correctedNecessityTable(outcome, negated = false, onlyPassing = false) {
+  const result = baselineNecessity(outcome, negated);
+  const rows = onlyPassing ? result.rows.filter(r => r.necessary && r.ron >= 0.5) : result.rows;
+  if (!rows.length) return '<p class="qca-hint">本规格下没有同时达到 inclN ≥0.90、RoN ≥0.50 的单条件关系。</p>';
+  return `<div class="qca-table-scroll"><table class="qca-table"><thead><tr><th>条件</th><th>结果</th><th>必要性一致性 inclN</th><th>必要性覆盖度 covN</th><th>RoN</th><th>联合筛查</th></tr></thead><tbody>${rows.map(r => `<tr><td>${esc(r.condition)}</td><td>${negated ? '~' : ''}${esc(outcome)}</td><td>${necFit(r.consistency)}</td><td>${necFit(r.coverage)}</td><td>${necFit(r.ron)}</td><td>${r.necessary && r.ron >= 0.5 ? '达到本规格门槛' : '未达到联合门槛'}</td></tr>`).join('')}</tbody></table></div>`;
+}
 function necessityHtml() {
-  const s2 = O.s2_necessity;
-  const flagBadge = it => {
-    if (it.flag === 'star') return '<span class="qca-badge qca-good">★ 主结论</span>';
-    if (it.flag === 'edge') return '<span class="qca-badge qca-warn">贴线 · 稳健性有限</span>';
-    if (it.flag === 'ron-invalid') return '<span class="qca-badge qca-warn">RoN 失效 · 须人工复核</span>';
-    return '';
-  };
-  const rows = s2.items.map(it => `
-    <tr>
-      <td class="qca-term">${esc(it.expr)}</td>
-      <td>${esc(it.condName)}</td>
-      <td class="${it.flag === 'star' ? 'qca-good' : 'qca-warn'}">${esc(it.consistency)}</td>
-      <td>${esc(it.coverage)}</td>
-      <td>${esc(it.ron || '—')}</td>
-      <td>${flagBadge(it)}${it.flag === 'edge' ? '<small class="qca-note">高于判定线约 0.0007</small>' : ''}</td>
-    </tr>`).join('');
-  /* R-c：核心限制警示条与必要性表同屏（正上方），物理上无法只看 ★ 不看警告 */
-  const coreLimits = PUBLIC_LIMITS.map(t => `<li>${esc(t)}</li>`).join('');
-  const warnBar = `<div class="qca-warn-bar"><strong>解释边界：</strong><ul>${coreLimits}</ul></div>`;
-  const near = s2.nearNecessary.map(it => `
-    <tr><td class="qca-term">${esc(it.expr)}</td><td>${esc(it.consistency)}</td><td>${esc(it.coverage)}</td><td>${esc(it.ron || '—')}</td><td>未达到必要性一致性阈值</td></tr>`).join('');
-  const foot = O.s2_necessity.items.find(x => x.footnote);
-  const footHtml = foot ? '<p class="qca-footnote">TEC→ECO 的一致性为 0.9007，接近 0.90 判定线，其解释需结合稳健性检验。</p>' : '';
-  const nearHtml = `
-    <details class="qca-details"><summary>接近必要的关系（一致性 0.80～0.90）· ${s2.nearNecessary.length} 条</summary>
-      <div class="qca-table-scroll"><table class="qca-table">
-        <tr><th>关系</th><th>一致性</th><th>覆盖度</th><th>RoN</th><th>解读</th></tr>${near}
-      </table></div>
-    </details>`;
-  const body = `
-    <p class="qca-stance">空间要素配置不足与 AGR、CON、ECO 三类结果的缺席存在必要性关系，其中 ~SPA→~CON 的 RoN 无有效值，解释受到限制。充分性结果反映本样本中已观察到的条件组合。</p>
-    ${warnBar}
-    <div class="qca-table-scroll"><table class="qca-table">
-      <tr><th>关系</th><th>条件名称</th><th>一致性</th><th>覆盖度</th><th>RoN</th><th>判定</th></tr>
-      ${rows}
-    </table></div>
-    <p class="qca-hint">判定口径：${esc(O.meta.thresholds.necessity)}；RoN 无有效值的关系单独标注。</p>
-    ${footHtml}${nearHtml}`;
-  return sectionShell('s2', '必要条件分析（实质锚点校准）', body, srcLine(s2.source));
+  const body = `<p class="qca-warn-bar"><strong>1.0.0 方法更正：</strong>旧分析附件的必要性一致性、覆盖度分母倒置，RoN 公式也有误；原必要性判断已撤回。下表按原始47案编码合成值及实质锚点0.25／0.50／0.75、log(19)直接校准重新计算，保留全精度后显示4位小数。高一致性不等于普遍必要条件。</p>
+    <p class="qca-note">inclN＝Σmin(X,Y)/ΣY；covN＝Σmin(X,Y)/ΣX；RoN＝Σ(1−X)/Σ(1−min(X,Y))。分母为零时不计算。此处是随包编码的基线复算，不使用会话内临时改分。</p>
+    ${BASELINE_OUTCOMES.map(oc => `<h4>${esc(oc)} · ${esc(OUTCOME_NAMES[oc])}</h4>${correctedNecessityTable(oc, false, true)}`).join('')}
+    <details class="qca-details"><summary>查看全部96组必要性关系（含条件否定及结果缺席）</summary>${[false,true].map(neg => BASELINE_OUTCOMES.map(oc => `<h4>${neg ? '~' : ''}${esc(oc)}</h4>${correctedNecessityTable(oc,neg)}`).join('')).join('')}</details>
+    <p class="qca-src">公式依据：<a href="https://bookdown.org/dusadrian/QCAbook/analysisofnecessity.html" target="_blank" rel="noopener">Dușa，QCA with R，第5章</a>。原编码与历史附件保留；正式解释仍需结合当前研究设计。</p>`;
+  return sectionShell('s2', '必要条件分析（1.0.0更正复算）', body, '<p class="qca-src">数据来源：随包47案编码变量合成值 · 实质锚点校准 · 1.0.0必要性计算</p>');
 }
 function footnote(it) { return it.footnote || ''; }
 
@@ -160,12 +135,7 @@ function negativeHtml() {
   const s5 = O.s5_negative;
   const blocks = Object.keys(s5.outcomes).map(oc => {
     const o = s5.outcomes[oc];
-    const nec = o.necessity.length
-      ? `<div class="qca-table-scroll"><table class="qca-table">
-          <tr><th>必要性结论</th><th>一致性</th><th>覆盖度</th><th>RoN</th><th>判定</th></tr>
-          ${o.necessity.map(n => `<tr><td>${esc(n.text)}</td><td class="qca-good">${esc(n.consistency)}</td><td>${esc(n.coverage)}</td><td>${esc(n.ron || '—')}</td><td>${esc(n.verdict)}</td></tr>`).join('')}
-        </table></div>`
-      : `<p class="qca-hint">${esc(o.necessityNote || '无必要条件')}</p>`;
+    const nec = correctedNecessityTable(oc.slice(1), true, true);
     const sol = (slot, label) => `
       <h4>${esc(label)}</h4>
       <div class="qca-table-scroll"><table class="qca-table">
@@ -177,7 +147,7 @@ function negativeHtml() {
       ${nec}${sol(o.complex, '复杂解')}${sol(o.parsimonious, '简约解')}
     </div>`;
   }).join('');
-  const body = `<p class="qca-hint">对 ~AGR、~CON、~ECO、~SPE 分别建模，识别结果缺席时的条件组合。结果缺席不等同于项目失败。</p>${blocks}`;
+  const body = `<p class="qca-hint">对 ~AGR、~CON、~ECO、~SPE 分别建模。必要性表已按正确公式复算；以下充分性路径保留历史附件及其参数。结果缺席不等同于项目失败。</p>${blocks}`;
   return sectionShell('s5', '结果缺席分析（实质锚点校准）', body, srcLine(s5.source));
 }
 
@@ -221,7 +191,7 @@ export function officialHtml() {
       <h2>本版本分析</h2>
       <p class="qca-hero-sub">基于 6 个条件变量和 4 类结果，分析整治成效与资源编排的条件组合。主校准口径：${esc(O.meta.calibration)}。</p>
       <p class="qca-hero-meta">判定口径——必要性：${esc(O.meta.thresholds.necessity)}；充分性：${esc(O.meta.thresholds.sufficiency)}。</p>
-      <p class="qca-warn-bar qca-hero-note"><strong>参数说明：</strong>本页充分性分析采用 PRI ≥0.5；组态分析默认采用 PRI ≥0.75。比较结果前需统一参数。本页数值以收录的分析结果表为准。</p>
+      <p class="qca-warn-bar qca-hero-note"><strong>参数说明：</strong>本页充分性分析采用 PRI ≥0.5；组态分析默认采用 PRI ≥0.75。比较结果前需统一参数。必要性按1.0.0正确公式复算；充分性与稳健性表保留所列历史参数和数据来源，不能与临时改分后的交互结果直接混用。</p>
     </div>`;
   const s1Limits = PUBLIC_LIMITS.map(t => `<li>${esc(t)}</li>`).join('');
   const s1Body = `${overviewCards()}

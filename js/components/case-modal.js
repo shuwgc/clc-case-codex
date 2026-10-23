@@ -1,3 +1,4 @@
+import { coverCreditHtml } from './cover-credit.js';
 import { registerNavigationContext, rememberNavigation, dismissNavigation } from '../core/navigation-history.js';
 /* ================================================================
  * 组件：案例详情弹窗
@@ -62,7 +63,7 @@ export function openModal(project) {
     meta.innerHTML = `
       <span class="meta-pill">${ICON_PIN}${esc(project.province)}</span>
       <span class="meta-pill">${esc(project.batch)}</span>
-      <span class="meta-pill ${investKnown ? 'gold' : ''}">${ICON_MONEY}${investKnown ? esc(project.invest) : '投资额未披露'}</span>`;
+      <span class="meta-pill ${investKnown ? 'gold' : ''}">${ICON_MONEY}${investKnown ? esc(project.invest) : '投资额未披露'}</span>${coverCreditHtml(project.id)}`;
   }
 
   const tags = $('modalTags');
