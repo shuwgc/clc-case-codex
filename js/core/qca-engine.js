@@ -12,7 +12,7 @@
  * 最小化：Positive(1) / Negative(0) / Don't Care(-) / Remainders
  *   → COMPLEX（不用余数）/ PARSIMONIOUS（全部余数作 DC）/ INTERMEDIATE（选定余数作假设）
  * 输出参数：raw/unique coverage、consistency、solution coverage、solution consistency
- * 必要条件：Consistency = Σmin(X,Y)/ΣX；Coverage = Σmin(X,Y)/ΣY
+ * 必要条件：Consistency = Σmin(X,Y)/ΣY；Coverage = Σmin(X,Y)/ΣX
  *
  * 本文件只负责「怎么算」，数据从哪来、界面怎么画都不在这里。
  * 所有函数纯函数化，方便单元测试与未来替换。
@@ -405,8 +405,10 @@ export function minimize(truthTable, dataset, kind = 'complex', { assumptions = 
  * ⑦ 必要条件分析（Analysis of Necessary Conditions）
  * ============================================================ */
 /* 每个条件（含其否定）：
- *   Consistency = Σmin(X,Y)/ΣX（X 是 Y 的必要条件的程度）
- *   Coverage    = Σmin(X,Y)/ΣY
+ *   Consistency = Σmin(X,Y)/ΣY（结果集合是否包含于条件集合）
+ *   Coverage    = Σmin(X,Y)/ΣX
+ *   RoN         = Σ(1-X)/Σ(1-min(X,Y))
+ *   Source: https://bookdown.org/dusadrian/QCAbook/analysisofnecessity.html
  */
 export function necessaryConditions(dataset, { consistencyBenchmark = 0.9 } = {}) {
   const out = [];
@@ -417,17 +419,18 @@ export function necessaryConditions(dataset, { consistencyBenchmark = 0.9 } = {}
       let sumX = 0, sumMin = 0, valid = true;
       for (const row of dataset.rows) {
         const v = row.x[cond];
-        if (typeof v !== 'number') { valid = false; break; }
+        if (!Number.isFinite(v) || v < 0 || v > 1 || !Number.isFinite(row.y) || row.y < 0 || row.y > 1) { valid = false; break; }
         const x = negated ? 1 - v : v;
         sumX += x;
         sumMin += Math.min(x, row.y);
       }
       out.push({
         condition: negated ? `~${cond}` : cond,
-        consistency: valid && sumX > 0 ? sumMin / sumX : null,
-        coverage: valid && sumY > 0 ? sumMin / sumY : null,
-        necessary: valid && sumX > 0 && sumMin / sumX >= consistencyBenchmark,
-        partial: !valid, // 存在缺失值时标记（结果仅供参考）
+        consistency: valid && sumY > 0 ? sumMin / sumY : null,
+        coverage: valid && sumX > 0 ? sumMin / sumX : null,
+        ron: valid && dataset.rows.length - sumMin > 1e-12 ? (dataset.rows.length - sumX) / (dataset.rows.length - sumMin) : null,
+        necessary: valid && sumY > 0 && sumMin / sumY >= consistencyBenchmark,
+        partial: !valid, // 任一隶属度缺失或无效时，整个关系不输出指标。
       });
     }
   }
